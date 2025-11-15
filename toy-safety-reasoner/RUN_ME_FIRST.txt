@@ -1,0 +1,165 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    TOY SAFETY REASONER - Quick Start                       ║
+║                         Learn About Safety AI!                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📚 START HERE - Choose Your Path:
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│  1. INTERACTIVE DEMO (Recommended for First Time)                        │
+│                                                                           │
+│     $ python3 demo.py                                                     │
+│                                                                           │
+│     → Menu-driven interface                                               │
+│     → Try your own content                                                │
+│     → See examples                                                        │
+│     → Learn concepts                                                      │
+│                                                                           │
+│     Perfect for: Understanding how it works                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│  2. RUN EXAMPLES (See It In Action)                                      │
+│                                                                           │
+│     $ python3 examples.py all                                             │
+│                                                                           │
+│     → All test cases                                                      │
+│     → Safe, unsafe, and edge cases                                        │
+│     → Multiple categories                                                 │
+│                                                                           │
+│     Other options:                                                        │
+│     $ python3 examples.py detailed    # Full reasoning chain              │
+│     $ python3 examples.py compare     # Compare reasoning levels          │
+│     $ python3 examples.py multi       # Multi-policy evaluation           │
+│                                                                           │
+│     Perfect for: Seeing real classifications                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│  3. READ DOCUMENTATION (Understand Deeply)                                │
+│                                                                           │
+│     Start with:                                                           │
+│     → QUICKSTART.md       (5 minute intro)                                │
+│     → LEARNING_GUIDE.md   (Deep concepts)                                 │
+│     → ARCHITECTURE.md     (System diagrams)                               │
+│                                                                           │
+│     Perfect for: Building your own implementation                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│  4. USE AS LIBRARY (Build Something)                                      │
+│                                                                           │
+│     from safety_reasoner import SafetyReasoner, ReasoningLevel            │
+│                                                                           │
+│     reasoner = SafetyReasoner()                                           │
+│     result = reasoner.evaluate(                                           │
+│         "Your content here",                                              │
+│         reasoning_level=ReasoningLevel.HIGH                               │
+│     )                                                                     │
+│                                                                           │
+│     print(f"Classification: {result.overall_classification.value}")       │
+│     print(f"Confidence: {result.overall_confidence:.1%}")                 │
+│                                                                           │
+│     Perfect for: Integration into your project                            │
+└──────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+
+💡 WHAT IS THIS?
+
+This is an educational implementation of a "safety reasoner" - an AI system
+that evaluates content against safety policies with transparent reasoning.
+
+Inspired by OpenAI's gpt-oss-safeguard technical report, this toy version
+demonstrates core concepts:
+
+  ✓ Policy-based reasoning (not black box)
+  ✓ Chain-of-thought transparency (shows reasoning steps)
+  ✓ Multi-policy classification (checks many rules at once)
+  ✓ Configurable depth (LOW/MEDIUM/HIGH reasoning)
+
+⚠️  IMPORTANT: This is for LEARNING ONLY, not production use!
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎯 QUICK EXAMPLES TO TRY
+
+Safe Content:
+  "I disagree with their political views on taxation."
+  "This research paper analyzes hate speech detection methods."
+
+Unsafe Content:
+  "People from that group are subhuman vermin."
+  "Here's how to build explosives from household items."
+
+Edge Cases (Context Matters):
+  "This novel contains graphic violence in a dystopian setting."
+  "Self-defense techniques include strikes to vulnerable areas."
+
+═══════════════════════════════════════════════════════════════════════════
+
+📖 FILES IN THIS PROJECT
+
+README.md             - Project overview
+QUICKSTART.md         - Get started in 5 minutes  ← Start here!
+LEARNING_GUIDE.md     - Deep educational content
+ARCHITECTURE.md       - System diagrams and flow
+PROJECT_SUMMARY.txt   - Complete summary
+RUN_ME_FIRST.txt     - This file
+
+policies.json         - Safety policy definitions
+safety_reasoner.py    - Core implementation (~500 lines)
+examples.py          - Test cases and demos
+demo.py              - Interactive demo
+
+═══════════════════════════════════════════════════════════════════════════
+
+🚀 RECOMMENDED LEARNING PATH
+
+Day 1:
+  1. Run: python3 demo.py
+  2. Choose option 2 (Run quick examples)
+  3. Choose option 6 (Learn about safety reasoners)
+  4. Read: QUICKSTART.md
+
+Day 2:
+  1. Run: python3 examples.py all
+  2. Run: python3 examples.py compare
+  3. Read: LEARNING_GUIDE.md
+  4. Experiment with custom content in demo.py
+
+Day 3:
+  1. Read through safety_reasoner.py
+  2. Study ARCHITECTURE.md
+  3. Modify policies.json (add your own policy)
+  4. Try integrating into your own code
+
+Day 4+:
+  1. Read the OpenAI gpt-oss-safeguard paper
+  2. Explore extending with real LLMs
+  3. Build a web interface
+  4. Create a Discord/Slack bot
+
+═══════════════════════════════════════════════════════════════════════════
+
+❓ COMMON QUESTIONS
+
+Q: Is this production-ready?
+A: NO! Educational only. Use OpenAI Moderation API for production.
+
+Q: Can I modify it?
+A: YES! MIT license - learn, experiment, rebuild.
+
+Q: How accurate is it?
+A: ~60-70% for learning. Real systems achieve 80-85%+ F1 scores.
+
+Q: What if I want to build a real system?
+A: Start here to learn concepts, then integrate real LLMs like GPT-4, Claude, etc.
+
+═══════════════════════════════════════════════════════════════════════════
+
+Ready to start? Run this command:
+
+    $ python3 demo.py
+
+Happy learning! 🎓

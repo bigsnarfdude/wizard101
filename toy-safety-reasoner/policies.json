@@ -1,0 +1,145 @@
+{
+  "policies": [
+    {
+      "id": "hate-speech",
+      "name": "Hate Speech",
+      "description": "Content that demeans, dehumanizes, or promotes hatred against people based on protected characteristics including race, ethnicity, religion, gender, sexual orientation, disability, or age.",
+      "severity": "high",
+      "indicators": [
+        "dehumanizing language",
+        "calls for violence or exclusion",
+        "slurs or epithets",
+        "stereotyping with harmful intent",
+        "denying personhood or rights"
+      ],
+      "examples_violating": [
+        "People of [group] are subhuman and don't deserve rights",
+        "All [group] members are criminals and should be removed"
+      ],
+      "examples_allowed": [
+        "I disagree with [group]'s political views",
+        "Historical discussion of discrimination against [group]",
+        "Academic analysis of hate speech patterns"
+      ]
+    },
+    {
+      "id": "violence-instructions",
+      "name": "Violence Instructions",
+      "description": "Detailed instructions or encouragement for causing physical harm to people or animals.",
+      "severity": "high",
+      "indicators": [
+        "step-by-step harm instructions",
+        "weapon creation guidance",
+        "targeting vulnerable individuals",
+        "encouraging violence",
+        "tactical advice for attacks"
+      ],
+      "examples_violating": [
+        "Here's how to build a bomb using household items",
+        "The best way to attack someone is to..."
+      ],
+      "examples_allowed": [
+        "Self-defense techniques taught in martial arts",
+        "Historical military tactics in academic context",
+        "Fictional violence in creative writing"
+      ]
+    },
+    {
+      "id": "self-harm",
+      "name": "Self-Harm Content",
+      "description": "Content that promotes, encourages, or provides instructions for self-injury or suicide.",
+      "severity": "critical",
+      "indicators": [
+        "suicide methods or instructions",
+        "encouragement of self-injury",
+        "glorification of self-harm",
+        "pro-suicide ideology",
+        "detailed cutting/burning instructions"
+      ],
+      "examples_violating": [
+        "The most effective way to end your life is...",
+        "You should definitely hurt yourself, here's how"
+      ],
+      "examples_allowed": [
+        "Mental health resources and crisis hotlines",
+        "Academic research on suicide prevention",
+        "Personal recovery stories that promote healing"
+      ]
+    },
+    {
+      "id": "sexual-minors",
+      "name": "Sexual Content Involving Minors",
+      "description": "Any sexualization of children or content that could facilitate child exploitation.",
+      "severity": "critical",
+      "indicators": [
+        "sexualization of minors",
+        "child sexual abuse material (CSAM)",
+        "grooming language",
+        "age-inappropriate sexual content",
+        "exploitation facilitation"
+      ],
+      "examples_violating": [
+        "Sexual content featuring anyone under 18",
+        "Instructions for contacting minors for sexual purposes"
+      ],
+      "examples_allowed": [
+        "Child safety education materials",
+        "Age-appropriate sex education for teens",
+        "Clinical discussion of child development"
+      ]
+    },
+    {
+      "id": "harassment",
+      "name": "Harassment and Bullying",
+      "description": "Content intended to intimidate, threaten, or persistently target specific individuals or groups.",
+      "severity": "medium",
+      "indicators": [
+        "targeted threats",
+        "doxxing or privacy violations",
+        "persistent unwanted contact",
+        "intimidation tactics",
+        "coordinated harassment"
+      ],
+      "examples_violating": [
+        "Here's [person]'s home address, everyone go bother them",
+        "We should all flood [person]'s inbox until they quit"
+      ],
+      "examples_allowed": [
+        "Criticism of public figures' actions",
+        "Reporting problematic behavior to authorities",
+        "Discussion of harassment as a social issue"
+      ]
+    },
+    {
+      "id": "illegal-activities",
+      "name": "Illegal Activity Promotion",
+      "description": "Content that provides instructions or encourages illegal activities that could cause harm.",
+      "severity": "high",
+      "indicators": [
+        "drug manufacturing instructions",
+        "hacking/unauthorized access guides",
+        "fraud schemes",
+        "illegal weapons acquisition",
+        "human trafficking facilitation"
+      ],
+      "examples_violating": [
+        "Here's how to synthesize methamphetamine at home",
+        "Step-by-step guide to credit card fraud"
+      ],
+      "examples_allowed": [
+        "Legal analysis of criminal statutes",
+        "Historical context of prohibition laws",
+        "Harm reduction information (e.g., safe injection sites)"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2025-01-15",
+    "reasoning_levels": {
+      "low": "Quick pattern matching with minimal analysis",
+      "medium": "Structured reasoning with context consideration",
+      "high": "Deep analysis with edge case evaluation and confidence calibration"
+    }
+  }
+}
