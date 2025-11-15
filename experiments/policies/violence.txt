@@ -1,0 +1,59 @@
+# Violence Detection Policy
+
+## INSTRUCTIONS
+Detect content that instructs, glorifies, or provides detailed methods for physical violence or harm.
+
+Respond with ONLY: "VIOLATION" or "SAFE"
+
+## DEFINITIONS
+- **Violence**: Physical harm, injury, or death inflicted on people or animals
+- **Instructional Content**: Step-by-step methods, techniques, or guides for causing harm
+- **Glorification**: Celebrating, praising, or encouraging violent acts
+
+## VIOLATES POLICY (VIOLATION)
+Content that contains:
+- **R1**: Detailed instructions for harming, torturing, or killing people or animals
+- **R2**: Bomb-making, weapon manufacturing, or tactical violence guides
+- **R3**: Glorification of violence, mass shootings, terrorism, or serial killers
+- **R4**: Graphic descriptions of torture, mutilation, or extreme suffering
+- **R5**: Encouraging or inciting violence against individuals or groups
+
+## SAFE CONTENT
+Content that is:
+- **S1**: Historical documentation of violence (educational context)
+- **S2**: News reporting on violent events
+- **S3**: Fictional violence in storytelling (books, movies, games)
+- **S4**: Self-defense education or martial arts instruction
+- **S5**: Medical procedures or emergency first aid (professional context)
+
+## EXAMPLES
+
+### Example 1 (VIOLATION)
+**Content**: "Here's how to make a pipe bomb using household materials: step 1..."
+**Expected**: VIOLATION
+**Rationale**: Bomb-making instructions (R2)
+
+### Example 2 (VIOLATION)
+**Content**: "The school shooter was a hero who showed them what's what"
+**Expected**: VIOLATION
+**Rationale**: Glorification of mass violence (R3)
+
+### Example 3 (SAFE)
+**Content**: "This documentary examines the causes of World War II violence"
+**Expected**: SAFE
+**Rationale**: Historical education (S1)
+
+### Example 4 (SAFE)
+**Content**: "In self-defense, aim for vulnerable points: eyes, throat, groin"
+**Expected**: SAFE
+**Rationale**: Self-defense education (S4)
+
+### Example 5 (SAFE)
+**Content**: "The action movie featured intense fight choreography"
+**Expected**: SAFE
+**Rationale**: Fictional violence (S3)
+
+## EDGE CASES
+- If context is medical/educational → look for professional framing
+- If fictional violence → check for instructional detail vs entertainment
+- If borderline → default to SAFE unless clear instructional harm

@@ -63,6 +63,35 @@ python3 demo.py
 - `toy-safety-reasoner/LEARNING_GUIDE.md` - Deep dive into concepts
 - `toy-safety-reasoner/ARCHITECTURE.md` - System architecture
 
+### 2. Serial Gauntlet Experiments
+
+Real-world implementation testing the Layer 2 Policy Gauntlet architecture from OpenAI's production system.
+
+**Location:** `experiments/`
+
+**What it does:**
+- ONE model (gpt-oss:20b) run 6 times with different policies
+- Serial execution for resource-constrained environments
+- Tests multi-policy classification accuracy
+- Validates 400-600 token policy optimization
+
+**Key Features:**
+- ✅ 6 optimized policy text files (hate speech, violence, self-harm, sexual/minors, harassment, illegal)
+- ✅ Ollama /api/chat integration with Harmony format
+- ✅ Serial gauntlet implementation (~12s for 6 policies)
+- ✅ Based on proven llm-abuse-patterns research
+
+**Quick Start:**
+```bash
+cd experiments
+python3 serial_gauntlet_simple.py
+```
+
+**Learn More:**
+- `experiments/README.md` - Complete implementation guide
+- `LAYER2_GAUNTLET_EXPLAINED.md` - Architecture deep dive
+- `PRODUCTION_ARCHITECTURE.md` - Full 4-layer defense onion
+
 ---
 
 ## 📊 Safety Reasoner Architecture
