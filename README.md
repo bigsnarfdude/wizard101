@@ -5,6 +5,8 @@ Multi-policy classification challenges. Chain-of-thought explanations for every 
 
 The Gauntlet Architecture (Corrected)
 
+```
+
   ONE model (gpt-oss:20b on nigel, ~13GB VRAM)
 
   SIX policy files in folders:
@@ -26,6 +28,7 @@ Need to monitor the monitor here. what does COT what should we reason about the 
   - Call 5: Same model + harassment.txt policy
   - Call 6: Same model + illegal.txt policy
 
+```
 ---
 
 ## 🎯 Projects
