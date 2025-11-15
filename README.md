@@ -3,6 +3,29 @@
 A collection of educational AI projects focused on safety, reasoning, and responsible AI development. Tool building and experiments to tackle
 Multi-policy classification challenges. Chain-of-thought explanations for every decision and systems to monitor and flag.
 
+The Gauntlet Architecture (Corrected)
+
+  ONE model (gpt-oss:20b on nigel, ~13GB VRAM)
+
+  SIX policy files in folders:
+  policies/
+  ├── hate_speech.txt       # 520 tokens
+  ├── violence.txt          # 480 tokens
+  ├── self_harm.txt         # 510 tokens
+  ├── sexual_minors.txt     # 490 tokens
+  ├── harassment.txt        # 500 tokens
+  └── illegal.txt           # 470 tokens
+
+Need to monitor the monitor here. what does COT what should we reason about the reasoning?
+
+  SIX API calls:
+  - Call 1: Same model + hate_speech.txt policy
+  - Call 2: Same model + violence.txt policy
+  - Call 3: Same model + self_harm.txt policy
+  - Call 4: Same model + sexual_minors.txt policy
+  - Call 5: Same model + harassment.txt policy
+  - Call 6: Same model + illegal.txt policy
+
 ---
 
 ## 🎯 Projects
