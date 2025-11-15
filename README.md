@@ -1,6 +1,7 @@
 # Wizard101 - AI Safety & Learning Projects
 
-A collection of educational AI projects focused on safety, reasoning, and responsible AI development.
+A collection of educational AI projects focused on safety, reasoning, and responsible AI development. Tool building and experiments to tackle
+Multi-policy classification challenges.
 
 ---
 
