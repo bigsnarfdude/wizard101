@@ -2,8 +2,6 @@
 
 A collection of educational AI projects focused on safety, reasoning, and responsible AI development.
 
-**Maintained by:** [bigsnarfdude](https://github.com/bigsnarfdude)
-
 ---
 
 ## 🎯 Projects
