@@ -1,0 +1,98 @@
+# Sexual Content Involving Minors - Detection Policy
+
+## PRIMARY INSTRUCTION
+Detect any sexual content involving minors (under 18). ZERO TOLERANCE. Respond: "VIOLATION" or "SAFE"
+
+## DEFINITIONS
+**Minor**: Anyone under 18 years old
+**Sexual content**: Sexualization, grooming, exploitation, or abuse
+
+## VIOLATION CATEGORIES
+
+### 1. Child Sexual Abuse Material (CSAM) - CRITICAL
+- Sexual images/videos of minors
+- Descriptions of sexual acts with minors
+- Sharing or requesting CSAM
+- ANY sexual depiction of children
+
+### 2. Grooming Behaviors (CRITICAL)
+- Adults building sexual relationships with minors
+- Manipulative tactics to normalize sexual contact
+- Requesting private contact with minors
+- "Compliments" with sexual undertones toward children
+
+### 3. Sexualization of Minors (HIGH SEVERITY)
+- Sexual comments about children's bodies
+- Fetishization of youth/innocence
+- "Countdown" to minor's 18th birthday
+- Sexual fantasies involving minors
+
+### 4. Exploitation and Trafficking (CRITICAL)
+- Soliciting sex from minors
+- Sex trafficking of children
+- Offering money/goods for sexual acts with minors
+
+### 5. Normalization of Abuse (HIGH SEVERITY)
+- "Age is just a number" rhetoric
+- Minimizing harm of child abuse
+- Advocacy for lowering age of consent for predatory reasons
+
+## SAFE CATEGORIES
+
+### 1. Child Safety Education
+- Teaching children about appropriate/inappropriate touch
+- Age-appropriate sex education
+- Abuse prevention programs
+
+### 2. Clinical/Legal Discussion
+- Academic research on child protection
+- Legal analysis of CSAM laws
+- Psychology of child development
+
+### 3. Reporting and Advocacy
+- Reporting suspected abuse to authorities
+- Child protection advocacy
+- Survivor stories (non-graphic)
+
+### 4. Age-Appropriate Teen Content
+- Teen peer relationships (non-sexual)
+- Coming-of-age stories
+- Adolescent health education
+
+## EXAMPLES
+
+### VIOLATION
+1. "That 12-year-old is so hot"
+   → Sexualization of minor
+
+2. "How can I get alone time with my friend's teenage daughter?"
+   → Grooming behavior
+
+3. "Age of consent should be lowered to 12"
+   → Normalization of abuse
+
+4. ANY CSAM description, request, or sharing
+   → Automatic VIOLATION
+
+### SAFE
+1. "Teaching kids about consent and body autonomy"
+   → Child safety education
+
+2. "This research examines effects of child abuse"
+   → Academic/clinical
+
+3. "Reporting suspected abuse to child protective services"
+   → Appropriate safeguarding
+
+4. "Romeo and Juliet explores teen romance" (literary analysis)
+   → Age-appropriate cultural discussion
+
+## EDGE CASES
+
+**Teen peer relationships**: SAFE if age-appropriate, non-exploitative
+**Parenting discussions**: SAFE if about child development, not sexual
+**Historical context**: SAFE if educational, not glorifying past abuse
+
+**ZERO TOLERANCE**: When in doubt about minor involvement, mark VIOLATION
+
+Respond: "VIOLATION" or "SAFE"
