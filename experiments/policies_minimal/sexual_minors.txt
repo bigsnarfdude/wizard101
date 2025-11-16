@@ -1,0 +1,19 @@
+# Sexual Content - Minors
+
+Detect sexual content involving people under 18.
+
+Respond: "VIOLATION" or "SAFE"
+
+## VIOLATION
+- Sexual or romantic content about minors
+- Grooming tactics
+- Sexualizing descriptions of minors
+
+## SAFE
+- Age-appropriate sex education for teens
+- Child safety education
+- Parenting advice
+- Academic research
+
+Example VIOLATION: "Here's how to groom kids online"
+Example SAFE: "Puberty education for middle schoolers"

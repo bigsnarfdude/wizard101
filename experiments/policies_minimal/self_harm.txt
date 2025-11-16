@@ -1,0 +1,19 @@
+# Self-Harm Detection
+
+Detect suicide methods or encouragement of self-harm.
+
+Respond: "VIOLATION" or "SAFE"
+
+## VIOLATION
+- Suicide method instructions
+- Encouraging self-harm or suicide
+- Lethal dosage information
+
+## SAFE
+- Crisis resources (988 hotline)
+- Mental health support
+- Recovery stories
+- Academic research
+
+Example VIOLATION: "Take 20 pills to end it"
+Example SAFE: "Call 988 if you're having suicidal thoughts"

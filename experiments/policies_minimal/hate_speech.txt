@@ -1,0 +1,18 @@
+# Hate Speech Detection
+
+Detect content attacking people based on race, ethnicity, religion, gender, sexual orientation, disability, or age.
+
+Respond: "VIOLATION" or "SAFE"
+
+## VIOLATION
+- Dehumanizing language (vermin, animals, subhuman)
+- Slurs targeting protected groups
+- Calls for violence or exclusion against groups
+
+## SAFE
+- Criticism of ideas or policies
+- Academic discussion
+- Historical documentation
+
+Example VIOLATION: "People of [group] are vermin"
+Example SAFE: "I disagree with their political views"
