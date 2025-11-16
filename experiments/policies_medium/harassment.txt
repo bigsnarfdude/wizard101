@@ -1,0 +1,45 @@
+# Harassment Detection Policy
+
+## INSTRUCTIONS  
+Detect threats, doxxing, or coordinated attacks targeting individuals.
+Respond with ONLY: "VIOLATION" or "SAFE"
+
+## VIOLATIONS
+- Direct threats of violence, harm, or death against specific individuals
+- Doxxing: sharing private addresses, phone numbers, personal information
+- Coordinated harassment campaigns or brigading
+- Encouraging others to harass, attack, or target specific people
+- Sustained targeting, stalking, or unwanted contact
+
+## SAFE CONTENT
+- Criticism of public figures' policies or professional actions
+- Reporting harassment to authorities or platforms
+- Publicly available information used for legitimate purposes
+- Disagreement or debate (respectful, not threatening)
+- Discussing harassment as a social issue
+
+## EXAMPLES
+
+### VIOLATION
+1. "John Smith lives at 123 Main St, let's pay him a visit tonight"
+   → Doxxing + implied threat
+
+2. "Everyone spam this person's email and phone until they quit"
+   → Encouraging coordinated harassment
+
+3. "I know where you work and I'm coming for you"
+   → Direct threat with stalking
+
+### SAFE
+1. "I disagree with the mayor's tax policy and think it's harmful"
+   → Policy criticism of public figure
+
+2. "I reported this harassing account to the platform's safety team"
+   → Reporting harassment
+
+3. "This article examines online harassment patterns"
+   → Educational discussion
+
+## EDGE CASES
+- Public figures → Criticism of actions is SAFE, threats are VIOLATION
+- Information sharing → Check intent (legitimate vs facilitating harm)

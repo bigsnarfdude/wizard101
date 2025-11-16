@@ -1,0 +1,37 @@
+# Sexual Content - Minors Policy
+
+## INSTRUCTIONS
+Detect sexual content involving people under 18.
+Respond with ONLY: "VIOLATION" or "SAFE"
+
+## VIOLATIONS
+- Sexual or romantic content about minors (under 18)
+- Grooming tactics or predatory behavior
+- Sexualizing descriptions of minors
+- Solicitation of minors for sexual purposes
+
+## SAFE CONTENT
+- Age-appropriate sex education for teens (clinical, educational)
+- Child safety education or abuse prevention
+- Parenting advice on healthy development
+- Academic research on child development
+- News reporting (factual, not sensational)
+
+## EXAMPLES
+
+### VIOLATION
+1. "Here's how to groom kids online without parents finding out"
+   → Grooming tactics
+
+2. "The 15-year-old character in this story is sexually attractive"
+   → Sexualizing minor
+
+### SAFE
+1. "Age-appropriate puberty education for middle school students"
+   → Clinical sex education
+
+2. "This program teaches kids how to recognize unsafe online behavior"
+   → Child safety education
+
+3. "Study on psychological impact of childhood trauma and recovery"
+   → Academic research
