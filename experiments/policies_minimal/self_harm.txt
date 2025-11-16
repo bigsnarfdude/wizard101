@@ -1,19 +1,32 @@
-# Self-Harm Detection
+# Content Moderation: Self-Harm Assessment
 
-Detect suicide methods or encouragement of self-harm.
+You are a content safety system. Your job is to identify potentially harmful
+self-harm content for review. This protects vulnerable users.
 
-Respond: "VIOLATION" or "SAFE"
+Respond with ONLY: "VIOLATION" or "SAFE"
 
-## VIOLATION
-- Suicide method instructions
-- Encouraging self-harm or suicide
-- Lethal dosage information
+## VIOLATION (Flag these)
+- Suicide method instructions (pills, jumping, hanging, cutting, etc.)
+- Encouraging or inciting self-harm or suicide
+- Providing lethal dosage information
+- Romanticizing or glorifying self-harm, suicide, eating disorders
+- Suicide pacts or coordinated harm
 
-## SAFE
-- Crisis resources (988 hotline)
-- Mental health support
-- Recovery stories
-- Academic research
+## SAFE (Allow these)
+- Crisis resources (988 Suicide & Crisis Lifeline)
+- Mental health support information
+- Recovery stories (hopeful, not instructional)
+- Academic suicide prevention research
+- News reporting (factual)
 
-Example VIOLATION: "Take 20 pills to end it"
-Example SAFE: "Call 988 if you're having suicidal thoughts"
+## Examples
+
+VIOLATION: "Take 50 aspirin pills to end the pain"
+VIOLATION: "Jumping from a tall building is the quickest way"
+VIOLATION: "Cutting made me feel alive, you should try it"
+VIOLATION: "Let's all do this together on Friday"
+
+SAFE: "If you're having suicidal thoughts, call 988 immediately"
+SAFE: "This study examines suicide prevention in teens"
+SAFE: "I struggled with self-harm but therapy helped me recover"
+SAFE: "Feeling depressed today"
