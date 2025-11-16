@@ -118,3 +118,178 @@ is_violation = content_field == "VIOLATION"
 **Minimal policies achieve 40.0% multi-policy accuracy, only 3.6% below OpenAI's specialized model.**
 
 For serial gauntlet architectures, minimal policies (100-150 tokens) are optimal. The 400-600 token range from single-policy jailbreak detection does not generalize to multi-policy safety.
+
+## Future Experiments
+
+### 1. Tiered Caching System (Performance Optimization)
+
+**Motivation:** Most violations are repetitive. Running full LLM checks on known bad content wastes compute.
+
+**Architecture:**
+```
+L1: Hash Lookup (μs)
+  ↓ miss
+L2: Pattern/Embedding Match (ms)
+  ↓ miss  
+L3: Full LLM Check (seconds)
+  ↓
+Cache result for future hits
+```
+
+**Implementation:**
+```python
+violation_cache = {
+    "exact": {},              # Exact string matches - O(1)
+    "embeddings": FAISS,      # Semantic similarity - O(log n)
+    "patterns": regex_db      # Keyword patterns - O(k)
+}
+
+def check_with_cache(content):
+    # L1: Exact match
+    if content in violation_cache["exact"]:
+        return violation_cache["exact"][content]
+    
+    # L2: Embedding similarity (cosine > 0.95)
+    similar = violation_cache["embeddings"].search(content, threshold=0.95)
+    if similar:
+        return similar.violations
+    
+    # L3: Full LLM gauntlet (cache miss)
+    result = run_serial_gauntlet(content)
+    
+    # Cache for future
+    violation_cache["exact"][content] = result
+    violation_cache["embeddings"].add(content, result)
+    
+    return result
+```
+
+**Expected Performance:**
+- 90%+ cache hit rate in production (repeated violations)
+- L1 hits: <1ms (vs 12s LLM)
+- L2 hits: <100ms (vs 12s LLM)
+- 100-1000x speedup for common violations
+
+**Tradeoffs:**
+- Memory: Cache storage (millions of entries)
+- Freshness: Stale cache if policies change
+- Edge cases: Near-miss variations might slip through
+
+**Evaluation:**
+- Measure cache hit rate on real traffic
+- Compare accuracy: cached vs fresh LLM decisions
+- Benchmark latency distribution
+
+### 2. Policy-Specific Length Optimization
+
+**Motivation:** Current study used uniform lengths (all minimal or all medium). Each policy might have different optimal lengths.
+
+**Hypothesis:**
+- **illegal**: Complex (needs examples) → 400-600 tokens ✓
+- **violence**: Simple (clear patterns) → 100-150 tokens ✓
+- **hate_speech**: Context-heavy → 300-500 tokens ?
+- **self_harm**: Currently broken (0% F1) → needs redesign
+- **sexual_minors**: Working (35% F1) → keep minimal
+- **harassment**: Context-heavy → 300-500 tokens ?
+
+**Experiment:**
+Test all 64 combinations of minimal/medium per policy (2^6), measure multi-policy accuracy for each.
+
+**Expected Finding:**
+Mixed approach beats uniform:
+- Illegal (medium): 400 tokens
+- Harassment (medium): 350 tokens  
+- Hate_speech (medium): 300 tokens
+- Violence (minimal): 120 tokens
+- Sexual_minors (minimal): 100 tokens
+- Self_harm: redesigned policy
+
+Target: 45%+ multi-policy accuracy (beat OpenAI's 43.6%)
+
+### 3. Parallel Gauntlet (Latency Optimization)
+
+**Motivation:** Serial takes 12s per content. Production needs <2s response time.
+
+**Implementation:**
+- Load 6 model instances simultaneously
+- Run all policy checks in parallel
+- Aggregate results
+
+**Requirements:**
+- GPU: 6 × 20GB = 120GB VRAM
+- Frameworks: asyncio, multiprocessing, or Ray
+
+**Expected:**
+- Latency: 12s → 2s (6x improvement)
+- Accuracy: Same as serial (40%)
+- Throughput: Higher (can process multiple contents simultaneously)
+
+**Note:** Pure engineering optimization, no research value for accuracy experiments.
+
+### 4. Self-Harm Policy Redesign
+
+**Problem:** Current policy has 0% F1 (catches nothing)
+
+**Root Cause Analysis Needed:**
+- Is policy text unclear?
+- Are test samples too subtle?
+- Does model refuse to engage with suicide content?
+
+**Approaches to test:**
+1. More explicit examples in policy
+2. Clinical framing ("mental health assessment")
+3. Dedicated model fine-tuned for crisis detection
+4. Ensemble: LLM + keyword patterns
+
+**Success metric:** >30% F1 (match other policies)
+
+### 5. Ensemble Methods
+
+**Motivation:** Combine multiple approaches for higher accuracy.
+
+**Architecture:**
+```python
+def ensemble_check(content):
+    # Vote from multiple systems
+    llm_result = run_serial_gauntlet(content)
+    keyword_result = pattern_matcher.check(content)
+    embedding_result = classifier.predict(content)
+    
+    # Weighted vote
+    return weighted_majority(
+        llm_result,      # weight: 0.6
+        keyword_result,  # weight: 0.2
+        embedding_result # weight: 0.2
+    )
+```
+
+**Components:**
+- LLM gauntlet (current system - 40% accuracy)
+- Keyword patterns (fast, high precision, low recall)
+- Embedding classifier (BERT fine-tuned on safety data)
+
+**Target:** 50%+ multi-policy accuracy (ensemble > individual)
+
+### 6. Active Learning Pipeline
+
+**Motivation:** Learn from mistakes to improve policies.
+
+**Pipeline:**
+```
+1. Run gauntlet on new content
+2. Collect failures (wrong predictions)
+3. Analyze failure patterns
+4. Generate new policy examples
+5. Re-evaluate
+6. Iterate
+```
+
+**Implementation:**
+- Track all wrong predictions
+- Cluster similar failures (embeddings)
+- Manual review of cluster representatives
+- Update policy files with new examples
+- Re-run evaluation
+
+**Expected:** Continuous improvement over time as policy examples expand.
+
