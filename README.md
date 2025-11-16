@@ -7,7 +7,7 @@ The Gauntlet Architecture (Corrected)
 
 ```
 
-  ONE model (gpt-oss:20b on nigel, ~13GB VRAM)
+  ONE model (gpt-oss:20b on remote-server, ~13GB VRAM)
 
   SIX policy files in folders:
   policies/

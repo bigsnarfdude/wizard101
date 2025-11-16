@@ -212,9 +212,9 @@ python load_academic_datasets.py
 cat academic_benchmark.json | jq '.[0]'
 ```
 
-### 3. Copy to nigel for Sunday
+### 3. Copy to Remote Server for Testing
 ```bash
-scp academic_benchmark.json vincent@nigel.birs.ca:~/wizard101/experiments/
+scp academic_benchmark.json user@remote-server:~/wizard101/experiments/
 ```
 
 ### 4. Run Gauntlet (TODO: Create evaluation script)
@@ -285,7 +285,7 @@ If you publish results using these datasets:
 2. ✅ Benchmark generated: `academic_benchmark.json` (90 samples)
 3. ⏳ **TODO:** Create evaluation script integrating with `serial_gauntlet_simple.py`
 4. ⏳ **TODO:** Calculate metrics (accuracy, F1, per-policy performance)
-5. ⏳ **Sunday:** Run experiments on nigel.birs.ca
+5. ⏳ **Testing:** Run experiments on remote server
 
 ---
 

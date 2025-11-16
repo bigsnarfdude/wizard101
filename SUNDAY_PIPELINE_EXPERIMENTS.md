@@ -1,7 +1,7 @@
 # Sunday Experiments: Building the Defense Onion
 
 **Goal:** Test each layer of the production pipeline architecture
-**Server:** nigel.birs.ca with gpt-oss:20b
+**Server:** remote-server with gpt-oss:20b
 **Time:** 2-3 hours on Sunday PST
 
 ---

@@ -120,7 +120,7 @@ class PolicyGauntlet:
         }
 
         # ONE Ollama model (13GB VRAM)
-        self.model = "gpt-oss:20b"  # Already running on nigel
+        self.model = "gpt-oss:20b"  # Already running on remote-server
 
     def check_sequential(self, content: str) -> dict:
         """
@@ -391,7 +391,7 @@ Content must "survive" all tests to be allowed.
 
 ## 🔧 Practical Implementation for Sunday
 
-### Directory Structure on nigel.birs.ca
+### Directory Structure on remote-server
 ```bash
 ~/wizard101/experiments/sunday-gauntlet/
 ├── policies/
@@ -451,7 +451,7 @@ def check_policy(content, policy_name, policy_text):
     response = requests.post(
         "http://localhost:11434/api/chat",
         json={
-            "model": "gpt-oss:20b",  # ONE model on nigel
+            "model": "gpt-oss:20b",  # ONE model on remote-server
             "messages": messages,
             "stream": False
         },
@@ -530,7 +530,7 @@ if __name__ == "__main__":
 ## 💡 Key Insights
 
 ### 1. It's NOT 6 Models
-- ✅ ONE model (gpt-oss:20b on nigel)
+- ✅ ONE model (gpt-oss:20b on remote-server)
 - ✅ SIX policy files (text files in folders)
 - ✅ SIX API calls (same model, different system messages)
 
@@ -564,7 +564,7 @@ echo "- R7: New rule about doxxing" >> policies/harassment.txt
 ## 🔬 Sunday Experiment Focus
 
 **Test:** Sequential vs Parallel
-- Measure actual latency on nigel
+- Measure actual latency on remote-server
 - Is parallel really faster? (depends on Ollama queue)
 - What's the accuracy difference?
 

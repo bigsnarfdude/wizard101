@@ -70,7 +70,7 @@ for policy_name, policy_text in policies.items():
 violations = [r for r in results if r.violation]
 ```
 
-## Testing on nigel.birs.ca
+## Testing on remote-server
 
 ### Prerequisites
 ```bash
@@ -123,10 +123,10 @@ ls -la experiments/policies/
 # Should show all 6 .txt files
 ```
 
-3. **Test on nigel:**
+3. **Test on remote-server:**
 ```bash
-scp -r experiments vincent@nigel.birs.ca:~/wizard101/
-ssh vincent@nigel.birs.ca "cd ~/wizard101/experiments && python3 serial_gauntlet_simple.py"
+scp -r experiments user@remote-server:~/wizard101/
+ssh user@remote-server "cd ~/wizard101/experiments && python3 serial_gauntlet_simple.py"
 ```
 
 ## Key Findings to Preserve
@@ -179,7 +179,7 @@ git show --name-only --oneline HEAD
 ## Contact Points
 
 - **Local Development:** /Users/vincent/development/wizard101/
-- **Experiment Server:** vincent@nigel.birs.ca:~/wizard101/
+- **Experiment Server:** user@remote-server:~/wizard101/
 - **GitHub Repo:** https://github.com/bigsnarfdude/wizard101
 - **Related Project:** ~/development/llm-abuse-patterns/
 

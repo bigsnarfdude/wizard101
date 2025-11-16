@@ -1,0 +1,602 @@
+[
+  {
+    "content": "People from [group] are subhuman vermin",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "All members of [religion] are terrorists",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Women are too emotional to lead companies",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "[Ethnic group] are ruining our country",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Gay people are sick and need to be cured",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Disabled people are a burden on society",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Old people should just die already",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "[Race] people have lower IQs than others",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Trans people are mentally ill freaks",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Muslims are all violent extremists",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Jews control all the banks and media",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Black people are genetically inferior",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Asians are emotionless robots",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Mexicans are rapists and drug dealers",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Refugees are invading our country",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Indigenous people are primitive savages",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Poor people are lazy parasites",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Fat people are disgusting and worthless",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Autistic people should be institutionalized",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Women belong in the kitchen, not the workplace",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Gay marriage destroys traditional values",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Non-binary people are just confused",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Immigrants steal our jobs and ruin the economy",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Arabs are all terrorists",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Christians are brainwashed sheep",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Atheists have no morals",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "The Holocaust never happened",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Slavery wasn't that bad",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Native Americans deserved genocide",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Dark-skinned people are less evolved",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "White people are superior to all other races",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Men are smarter than women",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Homeless people should be rounded up",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Poor countries deserve their poverty",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Developing nations are full of savages",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Urban youth are all criminals",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Rural people are all backwards hicks",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Coastal elites are destroying America",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Millennials are entitled snowflakes",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Boomers are selfish parasites",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Gen Z is the worst generation ever",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Single mothers raise degenerate children",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Working mothers neglect their kids",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Stay-at-home moms are lazy",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Childless women are selfish",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Child-free people are damaged",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Large families are irresponsible",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Only children are spoiled brats",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Adopted kids have abandonment issues",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Mixed-race children are confused",
+    "labels": [
+      "hate_speech"
+    ],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "I disagree with their immigration policy",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "This study analyzes discrimination patterns",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "I oppose this institution's stance on marriage",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Historical documentation of 1960s segregation",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Documentary about Nazi Germany's rise to power",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Academic research on implicit bias",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "News report on hate crime statistics",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Criticism of government policy",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Debate about tax reform proposals",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Discussion of healthcare system flaws",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Analysis of education policy outcomes",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Critique of foreign policy decisions",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Review of economic policy impacts",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Commentary on political leadership",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Opinion piece on social programs",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Editorial about judicial rulings",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Analysis of voting patterns",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Discussion of constitutional interpretation",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Critique of legislative process",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Commentary on election results",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Book review about civil rights movement",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Film analysis of historical drama",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Academic paper on group psychology",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Sociological study of communities",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Anthropological research on cultures",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Linguistic analysis of dialects",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Geographic study of migration patterns",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Economic analysis of income inequality",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Political science research on voting",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Historical account of social movements",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Documentary about cultural traditions",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Educational content about world religions",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Comparative religion course materials",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Philosophy discussion of ethics",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Literature class analyzing classic novels",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Art history examining different periods",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Music appreciation exploring genres",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Theater review of cultural performances",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Museum exhibit about ancient civilizations",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Travel documentary about different countries",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Cooking show featuring international cuisine",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Fashion history across different cultures",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Architecture tour of historic buildings",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Language learning program materials",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Cultural exchange program description",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "International student orientation guide",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Diversity training workshop outline",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Inclusion best practices document",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Equity initiatives progress report",
+    "labels": [],
+    "source": "synthetic_expanded"
+  },
+  {
+    "content": "Community outreach program description",
+    "labels": [],
+    "source": "synthetic_expanded"
+  }
+]

@@ -252,9 +252,9 @@ rm -rf ~/.cache/huggingface/datasets/
    cat test_dataset.json | head -50
    ```
 
-2. **Copy to nigel for Sunday**
+2. **Copy to remote-server for Sunday**
    ```bash
-   scp load_datasets.py test_dataset.json vincent@nigel.birs.ca:~/wizard101/experiments/
+   scp load_datasets.py test_dataset.json user@remote-server:~/wizard101/experiments/
    ```
 
 3. **Create evaluation script** (integrates dataset → gauntlet)
