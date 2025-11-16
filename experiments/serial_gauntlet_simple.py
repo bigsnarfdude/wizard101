@@ -113,24 +113,27 @@ def check_one_policy(
         content_field = message.get("content", "").strip().upper()
         thinking_field = message.get("thinking", "").strip()
 
-        # Determine violation (check BOTH fields like baseline models)
-        is_violation = "VIOLATION" in content_field or "VIOLATION" in thinking_field.upper()
+        # FIX: Only check content field for decision, NOT thinking field!
+        # Thinking field contains reasoning which mentions "VIOLATION" even when saying SAFE
+        is_violation = content_field == "VIOLATION"
 
         # Determine confidence
         if content_field in ["VIOLATION", "SAFE"]:
             confidence = 0.95  # Clear response
         elif "VIOLATION" in content_field or "SAFE" in content_field:
             confidence = 0.85  # Response with extra text
+            # Recheck violation with exact match
+            is_violation = "VIOLATION" in content_field and "SAFE" not in content_field
         else:
-            # Fallback to thinking field analysis
+            # Fallback: content field didn't give clear answer
+            # Check thinking field as last resort
             confidence = 0.70
-            # Check thinking field for violation indicators
             if thinking_field:
                 thinking_upper = thinking_field.upper()
-                is_violation = (
-                    "VIOLATION" in thinking_upper and
-                    "NOT" not in thinking_upper
-                )
+                # More careful parsing: look for final conclusion
+                lines = thinking_field.split('\n')
+                last_line = lines[-1] if lines else ""
+                is_violation = "VIOLATION" in last_line.upper()
 
         latency_ms = (time.time() - start_time) * 1000
 
