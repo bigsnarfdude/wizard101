@@ -3,7 +3,7 @@
 A collection of educational AI projects focused on safety, reasoning, and responsible AI development. Tool building and experiments to tackle
 Multi-policy classification challenges. Chain-of-thought explanations for every decision and systems to monitor and flag.
 
-The Gauntlet Architecture (Corrected)
+The Gauntlet Architecture
 
 ```
 
