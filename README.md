@@ -126,7 +126,7 @@ The visualization above shows the complete data flow through a safety reasoning 
 - **Violated Policies** - Which specific policies were broken
 
 This architecture demonstrates the core concepts used in production systems like OpenAI's gpt-oss-safeguard (20B-120B parameters), but implemented as an educational tool with simple heuristics.
-
+UPDATED https://github.com/yueliu1999/GuardReasoner/
 ---
 
 ## 🎓 Educational Goals
