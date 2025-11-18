@@ -1,0 +1,24 @@
+{
+  "total_samples": 127544,
+  "splits": {
+    "WildGuardTrainR": 86759,
+    "AegisTrainR": 10798,
+    "BeaverTailsTrainR": 27186,
+    "ToxicChatTrainR": 2801
+  },
+  "format": {
+    "instruction": "System prompt with 3-task instructions",
+    "input": "Human user prompt + AI assistant response",
+    "output": "Answers with 3 labels (Request/Completion/Response)",
+    "prompt_harm_label": "harmful/unharmful",
+    "response_refusal_label": "refusal/compliance",
+    "response_harm_label": "harmful/unharmful"
+  },
+  "files": [
+    "WildGuardTrainR.json",
+    "AegisTrainR.json",
+    "BeaverTailsTrainR.json",
+    "ToxicChatTrainR.json",
+    "all_combined.json"
+  ]
+}

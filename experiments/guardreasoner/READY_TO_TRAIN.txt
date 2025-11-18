@@ -1,0 +1,68 @@
+✅ EXPERIMENT 19 - READY TO RUN
+
+Location: ~/development/wizard101/experiments/guardreasoner/
+Status: All files prepared, waiting for GPU
+
+═══════════════════════════════════════════════════════════
+
+QUICK START:
+
+cd ~/development/wizard101/experiments/guardreasoner
+screen -S exp19
+python3 scripts/experiment_19_train_full_dataset.py
+
+(Ctrl+A then D to detach)
+
+═══════════════════════════════════════════════════════════
+
+WHAT'S INCLUDED:
+
+✅ Training script: scripts/experiment_19_train_full_dataset.py (7.8KB)
+✅ Dataset: guardreasoner_data/ (127,544 samples, 357MB)
+✅ Documentation: EXP_19_README.md
+✅ Dataset info: DATASET_READY.md
+
+═══════════════════════════════════════════════════════════
+
+KEY IMPROVEMENTS OVER EXP 18:
+
+Exp 18 (Current)          →  Exp 19 (This)
+─────────────────────────────────────────────
+11,396 samples            →  127,544 samples (11× more)
+1 task (binary)           →  3 tasks (prompt/refusal/response)
+No responses              →  Prompt + response pairs
+59% accuracy (1 epoch)    →  75-80% expected (3 epochs)
+
+═══════════════════════════════════════════════════════════
+
+TRAINING ESTIMATE:
+
+Duration: ~270 hours (~11 days)
+GPU: Single GPU, 4-bit LoRA
+Checkpoints: Saved after each epoch
+
+═══════════════════════════════════════════════════════════
+
+CRITICAL FIXES APPLIED:
+
+1. ✅ Dataset format: Fixed conversations → instruction/input/output
+2. ✅ Dataset splits: Loads all 4 splits correctly
+3. ✅ Batch config: Matches Exp 18 (2×64 = 128 effective)
+4. ✅ Learning rate: Matches Exp 18 (5e-5)
+5. ✅ Epochs: 3 (tested in Exp 18, paper used 5)
+6. ✅ Evaluation: 1% validation split for monitoring
+7. ✅ Seq length: Auto-detected from data
+
+═══════════════════════════════════════════════════════════
+
+EXPECTED RESULTS:
+
+Minimum:  70% accuracy
+Target:   75-80% accuracy
+Paper:    84% (8B model)
+Gap:      4-9% (acceptable, due to 3B vs 8B)
+
+═══════════════════════════════════════════════════════════
+
+Date prepared: 2025-11-18
+Ready for: GPU availability
