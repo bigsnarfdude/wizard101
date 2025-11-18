@@ -48,9 +48,9 @@ An educational implementation demonstrating how modern AI safety systems work, i
 **Key Features:**
 - ✅ 6 comprehensive safety policies (hate speech, violence, self-harm, etc.)
 - ✅ Interactive demo with menu system
-- ✅ 30+ test cases across multiple categories
+- ✅ 500+ test cases across multiple categories
 - ✅ Full documentation and learning guides
-- ✅ ~500 lines of well-commented Python
+
 
 **Quick Start:**
 ```bash
