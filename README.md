@@ -258,13 +258,6 @@ python3 examples.py multi
 - Vulnerable to adversarial attacks
 - Cannot adapt or learn from feedback
 
-### For Production Use
-
-Real content moderation systems to consider:
-- **OpenAI Moderation API** - Production-grade safety classification
-- **Perspective API** (Google) - Toxicity detection at scale
-- **Azure Content Safety** - Microsoft's moderation service
-- **LlamaGuard** (Meta) - Open-source safety model
 
 ---
 
@@ -310,23 +303,6 @@ Real content moderation systems to consider:
 
 **Key Takeaway:** Even with 6000x fewer parameters, this toy demonstrates the same core concepts used in production systems!
 
----
-
-## 🤝 Contributing
-
-This is an educational project! Contributions welcome:
-
-1. **Improvements** - Better algorithms, clearer documentation
-2. **Extensions** - New policies, multi-language support, LLM integration
-3. **Educational Content** - Tutorials, examples, explanations
-4. **Bug Fixes** - Issues, edge cases, improvements
-
-**To contribute:**
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-improvement`)
-3. Commit your changes (`git commit -m 'Add amazing improvement'`)
-4. Push to branch (`git push origin feature/amazing-improvement`)
-5. Open a Pull Request
 
 ---
 
@@ -371,42 +347,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - **OpenAI** - For the gpt-oss-safeguard research and technical report
 - **AI Safety Community** - For ongoing research in transparent AI systems
 - **Open Source Contributors** - For tools and frameworks that make education accessible
-
----
-
-## 📬 Contact
-
-**Maintainer:** bigsnarfdude
-- GitHub: [@bigsnarfdude](https://github.com/bigsnarfdude)
-
-**Questions?**
-- Open an issue on GitHub
-- Check existing documentation in `toy-safety-reasoner/`
-- Read the learning guides for detailed explanations
-
----
-
-## 🎯 Project Roadmap
-
-### Completed ✅
-- [x] Core safety reasoner implementation
-- [x] 6 comprehensive safety policies
-- [x] Chain-of-thought reasoning (5 steps)
-- [x] Multi-policy evaluation
-- [x] Interactive demo
-- [x] 30+ test cases
-- [x] Complete documentation suite
-- [x] Architecture visualization
-
-### Planned 🔮
-- [ ] Web interface (Flask/FastAPI)
-- [ ] Real LLM integration (OpenAI/Anthropic APIs)
-- [ ] Multi-language support
-- [ ] Adversarial testing suite
-- [ ] Discord/Slack bot example
-- [ ] Fine-tuning examples
-- [ ] Benchmark comparisons
-- [ ] Video tutorials
 
 ---
 
