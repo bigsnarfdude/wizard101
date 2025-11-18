@@ -1,4 +1,4 @@
-# Wizard101 - AI Safety & Learning Projects
+# Wizard101 - AI Safety Learning Project
 
 An educational AI project focused on safety reasoner, Tool building and experiments to tackle Multi-policy classification challenges. 
 Chain-of-thought monitoring and detection platform.
