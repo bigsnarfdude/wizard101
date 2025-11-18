@@ -1,7 +1,7 @@
 # Wizard101 - AI Safety & Learning Projects
 
-A collection of educational AI projects focused on safety, reasoning, and responsible AI development. Tool building and experiments to tackle
-Multi-policy classification challenges. Chain-of-thought explanations for every decision and systems to monitor and flag.
+An educational AI project focused on safety reasoner, Tool building and experiments to tackle Multi-policy classification challenges. 
+Chain-of-thought monitoring and detection platform.
 
 The Gauntlet Architecture
 
