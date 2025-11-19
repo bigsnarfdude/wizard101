@@ -48,3 +48,15 @@ Thumbs.db
 *.log
 .cache/
 .pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*_password
+*_PASSWORD
+CASTLE.password
+ANDROMEDA.password
+birszoom.password
