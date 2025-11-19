@@ -7,6 +7,8 @@ A comprehensive AI safety project spanning toy implementations to state-of-the-a
 **Current Focus**: Implementing GuardReasoner (Liu et al. 2025) - reasoning-based LLM safety classifier achieving 84% F1 score.
 and validating released model https://github.com/yueliu1999/GuardReasoner/
 
+![Wizard101 Project](wizard101.png)
+
 ---
 
 ## 🎯 Projects Overview
