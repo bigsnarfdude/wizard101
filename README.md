@@ -1,4 +1,4 @@
-# Wizard101 - AI Safety Research & Implementation
+# Wizard101 - AI Safety Research
 
 A comprehensive AI safety project spanning toy implementations to state-of-the-art reasoning-based safeguards, featuring GuardReasoner replication with custom data generation pipeline.
 
