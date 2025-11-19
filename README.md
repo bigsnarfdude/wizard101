@@ -1,5 +1,7 @@
 # Wizard101 - AI Safety Research
 
+Cascata Fiduciae Fundata
+
 A comprehensive AI safety project spanning toy implementations to state-of-the-art reasoning-based safeguards, featuring GuardReasoner replication with custom data generation pipeline.
 
 **Current Focus**: Implementing GuardReasoner (Liu et al. 2025) - reasoning-based LLM safety classifier achieving 84% F1 score.
