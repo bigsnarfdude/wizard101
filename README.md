@@ -8,17 +8,26 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 
 ---
 
-## Key Finding: L2 Recommendation
+## Key Finding: L2 Options
 
 > **TL;DR: Use `gpt-oss:120b` with direct classification for L2. No Chain-of-Thought prompting.**
 
-After extensive benchmarking on 7 problematic edge cases:
+### Choose by Hardware
 
-| Model | Size | Baseline | With CoT | Recommendation |
-|-------|------|----------|----------|----------------|
-| gpt-oss:20b | 20B | 57% | 71% | ❌ Too low |
-| gpt-oss-safeguard | 20B | 57% | 71% | ❌ Policy training didn't help |
-| **gpt-oss:120b** | **120B** | **86%** | 71% | ✅ **Best choice** |
+| Option | Model | Accuracy | VRAM | Best For |
+|--------|-------|----------|------|----------|
+| **Best** | gpt-oss:120b direct | 86% | 65GB | Production |
+| **Good** | Gauntlet (6× 20b voting) | ~71% | 13GB | Limited VRAM |
+| **Acceptable** | gpt-oss:20b + CoT | 71% | 13GB | Single model |
+| **Budget** | gpt-oss-safeguard | 57% | 13GB | Speed priority |
+
+### Benchmark Results (7 Edge Cases)
+
+| Model | Size | Baseline | With CoT | Notes |
+|-------|------|----------|----------|-------|
+| gpt-oss:20b | 20B | 57% | 71% | CoT helps |
+| gpt-oss-safeguard | 20B | 57% | 71% | Policy training didn't help |
+| **gpt-oss:120b** | **120B** | **86%** | 71% | CoT hurts (overthinking) |
 
 ### Critical Insights
 

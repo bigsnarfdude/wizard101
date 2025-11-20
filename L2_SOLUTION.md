@@ -1,8 +1,21 @@
 # L2 Safety Classification Solution
 
-## Recommendation: gpt-oss:120b
+## L2 Options by Hardware
 
-Based on extensive benchmarking, **gpt-oss:120b with direct classification** is the recommended L2 solution for local deployment.
+Choose your L2 approach based on available resources:
+
+| Option | Model | Accuracy | VRAM | Speed | Best For |
+|--------|-------|----------|------|-------|----------|
+| **Best** | gpt-oss:120b direct | 86% | 65GB | 500ms | Production with high-end GPU |
+| **Good** | Gauntlet (6× gpt-oss:20b) | ~71% | 13GB | 2s | Limited VRAM, want ensemble |
+| **Acceptable** | gpt-oss:20b + CoT | 71% | 13GB | 1s | Limited VRAM, single model |
+| **Budget** | gpt-oss-safeguard | 57% | 13GB | 100ms | Speed priority, accept lower accuracy |
+
+---
+
+## Recommended: gpt-oss:120b
+
+Based on extensive benchmarking, **gpt-oss:120b with direct classification** is the recommended L2 solution for local deployment when you have the hardware.
 
 ---
 
