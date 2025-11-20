@@ -60,3 +60,5 @@ Thumbs.db
 CASTLE.password
 ANDROMEDA.password
 birszoom.password
+*.safetensors
+experiments/guardreasoner/mlx_models/*/model.safetensors
