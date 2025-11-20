@@ -90,27 +90,130 @@ def load_all_benchmarks(quick=False):
 
 
 def run_l0_batch(samples, threshold=0.7):
-    """Run L0 on samples."""
+    """Run L0 on samples, return caught and uncertain."""
     from l0_bouncer import L0Bouncer
     l0 = L0Bouncer()
 
-    results = []
-    for sample in samples:
+    caught = []
+    uncertain = []
+
+    for idx, sample in enumerate(samples):
         text = sample.get("text", "")
         result = l0.classify(text)
 
-        results.append({
-            "text": text,
-            "expected": sample.get("label", ""),
-            "predicted": result["label"],
-            "confidence": result["confidence"],
-            "stopped_at": "L0" if result["confidence"] >= threshold else "escalate",
-            "source": sample.get("source", "unknown"),
-        })
+        if result["confidence"] >= threshold:
+            caught.append((idx, {
+                "text": text,
+                "expected": sample.get("label", ""),
+                "predicted": result["label"],
+                "confidence": result["confidence"],
+                "stopped_at": "L0",
+            }))
+        else:
+            uncertain.append((idx, sample, result))
 
     del l0
     clear_gpu()
+    return caught, uncertain
+
+
+def run_l1_batch(uncertain_samples, threshold=0.7):
+    """Run L1 on uncertain samples."""
+    if not uncertain_samples:
+        return [], []
+
+    from l1_analyst import L1Analyst
+    l1 = L1Analyst()
+
+    caught = []
+    still_uncertain = []
+
+    for idx, sample, l0_result in uncertain_samples:
+        text = sample.get("text", "")
+        result = l1.analyze(text)
+
+        if result["confidence"] >= threshold:
+            caught.append((idx, {
+                "text": text,
+                "expected": sample.get("label", ""),
+                "predicted": result["label"],
+                "confidence": result["confidence"],
+                "stopped_at": "L1",
+            }))
+        else:
+            still_uncertain.append((idx, sample, result))
+
+    del l1
+    clear_gpu()
+    return caught, still_uncertain
+
+
+def run_l2_batch(uncertain_samples):
+    """Run L2 on remaining samples."""
+    if not uncertain_samples:
+        return []
+
+    from l2_gauntlet import L2Gauntlet
+    l2 = L2Gauntlet()
+
+    results = []
+
+    for idx, sample, l1_result in uncertain_samples:
+        text = sample.get("text", "")
+        result = l2.analyze(text)
+
+        results.append((idx, {
+            "text": text,
+            "expected": sample.get("label", ""),
+            "predicted": result["label"],
+            "confidence": 0.9 if result["consensus"] else 0.7,
+            "stopped_at": "L2",
+        }))
+
+    del l2
     return results
+
+
+def run_cascade_batch(samples, l0_threshold=0.7, l1_threshold=0.7, enable_l2=True):
+    """Run full cascade on samples."""
+    # L0
+    l0_caught, l0_uncertain = run_l0_batch(samples, l0_threshold)
+
+    # L1
+    l1_caught, l1_uncertain = run_l1_batch(l0_uncertain, l1_threshold)
+
+    # L2
+    if enable_l2 and l1_uncertain:
+        l2_results = run_l2_batch(l1_uncertain)
+    else:
+        # If L2 disabled, use L1's prediction
+        l2_results = []
+        for idx, sample, l1_result in l1_uncertain:
+            l2_results.append((idx, {
+                "text": sample.get("text", ""),
+                "expected": sample.get("label", ""),
+                "predicted": l1_result["label"],
+                "confidence": l1_result["confidence"],
+                "stopped_at": "L1-final",
+            }))
+
+    # Aggregate results
+    all_results = {}
+    for idx, result in l0_caught:
+        all_results[idx] = result
+    for idx, result in l1_caught:
+        all_results[idx] = result
+    for idx, result in l2_results:
+        all_results[idx] = result
+
+    # Sort by index to maintain order
+    results = [all_results[i] for i in sorted(all_results.keys())]
+
+    return results, {
+        "L0": len(l0_caught),
+        "L1": len(l1_caught),
+        "L2": len(l2_results),
+    }
 
 
 def calculate_metrics(results):
@@ -142,11 +245,19 @@ def main():
     parser = argparse.ArgumentParser(description="Run full benchmark evaluation")
     parser.add_argument("--quick", action="store_true", help="Quick mode (500 samples per dataset)")
     parser.add_argument("--l0-only", action="store_true", help="Only test L0 (no escalation)")
+    parser.add_argument("--no-l2", action="store_true", help="Disable L2 (stop at L1)")
+    parser.add_argument("--l0-threshold", type=float, default=0.7, help="L0 confidence threshold")
+    parser.add_argument("--l1-threshold", type=float, default=0.7, help="L1 confidence threshold")
     args = parser.parse_args()
 
     print("="*60)
     print("COMPREHENSIVE SAFETY CASCADE BENCHMARK")
     print("="*60)
+
+    mode = "L0 only" if args.l0_only else f"Full Cascade (L0→L1→L2)"
+    print(f"Mode: {mode}")
+    print(f"L0 threshold: {args.l0_threshold}")
+    print(f"L1 threshold: {args.l1_threshold}")
 
     # Load benchmarks
     print("\nLoading benchmarks...")
@@ -161,6 +272,7 @@ def main():
 
     # Evaluate each benchmark
     all_results = {}
+    all_layer_dist = defaultdict(int)
     start_time = time.time()
 
     print("\n" + "="*60)
@@ -169,13 +281,43 @@ def main():
 
     for name, data in benchmarks.items():
         print(f"\nEvaluating {name} ({len(data)} samples)...")
-        results = run_l0_batch(data)
+
+        if args.l0_only:
+            # L0 only mode
+            l0_caught, l0_uncertain = run_l0_batch(data, args.l0_threshold)
+            # For L0-only, treat uncertain as L0's best guess
+            results = []
+            for idx, result in l0_caught:
+                results.append(result)
+            for idx, sample, l0_result in l0_uncertain:
+                results.append({
+                    "text": sample.get("text", ""),
+                    "expected": sample.get("label", ""),
+                    "predicted": l0_result["label"],
+                    "confidence": l0_result["confidence"],
+                    "stopped_at": "L0",
+                })
+            layer_dist = {"L0": len(data), "L1": 0, "L2": 0}
+        else:
+            # Full cascade
+            results, layer_dist = run_cascade_batch(
+                data,
+                l0_threshold=args.l0_threshold,
+                l1_threshold=args.l1_threshold,
+                enable_l2=not args.no_l2
+            )
+
         all_results[name] = results
+
+        # Accumulate layer distribution
+        for layer, count in layer_dist.items():
+            all_layer_dist[layer] += count
 
         metrics = calculate_metrics(results)
         print(f"  Accuracy: {metrics['accuracy']:.1f}%")
         print(f"  Recall: {metrics['recall']:.1f}%")
         print(f"  F1: {metrics['f1']:.1f}%")
+        print(f"  Layers: L0={layer_dist['L0']}, L1={layer_dist['L1']}, L2={layer_dist['L2']}")
 
     total_time = time.time() - start_time
 
@@ -212,6 +354,14 @@ def main():
     print(f"Overall Precision: {overall['precision']:.1f}%")
     print(f"Overall Recall: {overall['recall']:.1f}%")
     print(f"Overall F1: {overall['f1']:.1f}%")
+
+    print(f"\nLayer Distribution:")
+    total_layered = sum(all_layer_dist.values())
+    for layer in ["L0", "L1", "L2"]:
+        count = all_layer_dist[layer]
+        pct = count / total_layered * 100 if total_layered > 0 else 0
+        print(f"  {layer}: {count} ({pct:.1f}%)")
+
     print(f"\nTotal Time: {total_time:.1f}s ({total_time/len(all_flat)*1000:.1f}ms/sample)")
 
     # Save results
