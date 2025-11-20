@@ -294,9 +294,9 @@ def train_bouncer(data):
         classes=np.array([0, 1]),
         y=labels
     )
-    # Boost harmful weight for better recall (safety-first approach)
-    class_weights[1] *= 1.5  # Increase harmful weight by 50%
-    print(f"\nClass weights: safe={class_weights[0]:.3f}, harmful={class_weights[1]:.3f} (boosted)")
+    # Moderate boost for recall while keeping precision reasonable
+    class_weights[1] *= 1.25  # 25% boost instead of 50%
+    print(f"\nClass weights: safe={class_weights[0]:.3f}, harmful={class_weights[1]:.3f} (25% boost)")
 
     # Data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
@@ -314,7 +314,8 @@ def train_bouncer(data):
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        metric_for_best_model="accuracy",
+        metric_for_best_model="f1",  # Use F1 to avoid "all safe" trap
+        greater_is_better=True,
         report_to="none",
         fp16=True,
     )
