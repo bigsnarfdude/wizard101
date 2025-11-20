@@ -2,11 +2,14 @@
 """
 Evaluate Cascade on Heretic Dataset
 
-Heretic is a jailbreak-focused adversarial dataset with 200 test samples.
+Heretic is a jailbreak-focused adversarial dataset with 1000 samples.
 Tests cascade robustness on adversarial prompts.
 
 Usage:
-    python evaluate_heretic.py [--batch]
+    python evaluate_heretic.py [--batch] [--full]
+
+    --full: Use all 1000 samples (train + test)
+    --batch: Memory-efficient batch mode
 """
 
 import gc
@@ -138,20 +141,34 @@ def run_l2_batch(uncertain_samples):
 def main():
     parser = argparse.ArgumentParser(description="Evaluate cascade on Heretic dataset")
     parser.add_argument("--batch", action="store_true", help="Use batch mode (memory efficient)")
+    parser.add_argument("--full", action="store_true", help="Use full dataset (train + test = 1000 samples)")
     parser.add_argument("--l0-threshold", type=float, default=0.7, help="L0 confidence threshold")
     parser.add_argument("--l1-threshold", type=float, default=0.7, help="L1 confidence threshold")
     args = parser.parse_args()
 
-    # Load Heretic test data
+    # Load Heretic data
     test_path = Path("../combined_test.json")
+    train_path = Path("../combined_train.json")
+
     if not test_path.exists():
         print(f"Heretic test data not found at {test_path}")
         return
 
-    print(f"Loading Heretic dataset: {test_path}")
-
-    with open(test_path) as f:
-        test_data = json.load(f)
+    if args.full:
+        if not train_path.exists():
+            print(f"Heretic train data not found at {train_path}")
+            return
+        print(f"Loading FULL Heretic dataset (train + test)")
+        with open(train_path) as f:
+            train_data = json.load(f)
+        with open(test_path) as f:
+            test_data = json.load(f)
+        test_data = train_data + test_data
+        print(f"  Train: {len(train_data)} + Test: {len(test_data) - len(train_data)} = {len(test_data)} total")
+    else:
+        print(f"Loading Heretic test set: {test_path}")
+        with open(test_path) as f:
+            test_data = json.load(f)
 
     # Normalize labels: harmless -> safe, harmful -> harmful
     for item in test_data:
