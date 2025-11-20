@@ -14,6 +14,7 @@ Usage:
 import json
 import time
 import argparse
+import os
 from pathlib import Path
 from datetime import datetime
 
@@ -270,7 +271,11 @@ def main():
         if not HAS_GEMINI:
             print("Error: pip install google-generativeai")
             return
-        genai.configure(api_key="REDACTED_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            print("Error: Set GOOGLE_API_KEY environment variable")
+            return
+        genai.configure(api_key=api_key)
         client = genai.GenerativeModel(args.model)
     else:
         if not HAS_ANTHROPIC:
