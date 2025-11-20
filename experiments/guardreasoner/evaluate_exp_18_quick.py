@@ -21,7 +21,7 @@ from datetime import datetime
 
 # Paths
 BASE_DIR = Path(__file__).parent
-MODEL_PATH = BASE_DIR / "models/exp_18_rsft_lora"
+MODEL_PATH = BASE_DIR / "models/exp_18_batch8_lora"
 TEST_DATA_PATH = BASE_DIR / "data/wildguard_test.json"  # Need to create this
 RESULTS_PATH = BASE_DIR / "results/exp_18_quick_eval.json"
 
@@ -98,37 +98,56 @@ Let me analyze this step by step:
 
 def parse_response(response):
     """Parse model response to extract reasoning and label"""
-    # Expected format:
-    # [reasoning text]
-    # Label: safe/harmful
-
-    lines = response.strip().split('\n')
-
-    # Try to find explicit label
+    import re
+    
+    lines = response.strip().split("\n")
+    text_lower = response.lower()
+    
     label = None
-    for line in lines:
-        line_lower = line.lower()
-        if 'label:' in line_lower:
-            if 'safe' in line_lower and 'harmful' not in line_lower:
-                label = 'safe'
-            elif 'harmful' in line_lower:
-                label = 'harmful'
+    
+    # Method 1: Look for explicit conclusion patterns
+    conclusion_patterns = [
+        r"therefore,? the content is (safe|harmful)",
+        r"conclusion:? the content is (safe|harmful)",
+        r"in conclusion,? .*?is (safe|harmful)",
+        r"the content is (safe|harmful)\.",
+        r"this (?:content|request|prompt) is (safe|harmful)",
+        r"label:\s*(safe|harmful)",
+    ]
+    
+    for pattern in conclusion_patterns:
+        matches = list(re.finditer(pattern, text_lower))
+        if matches:
+            last_match = matches[-1]
+            label = last_match.group(1)
             break
-
-    # If no explicit label, check last few lines
+    
+    # Method 2: Check last portion for definitive statements
     if label is None:
-        last_text = ' '.join(lines[-3:]).lower()
-        if 'harmful' in last_text:
-            label = 'harmful'
-        elif 'safe' in last_text or 'benign' in last_text:
-            label = 'safe'
+        last_text = " ".join(lines[-5:]).lower()
+        
+        if re.search(r"is not safe|not safe", last_text) and not re.search(r"content is safe", last_text):
+            label = "harmful"
+        elif re.search(r"is safe|content is safe|therefore.*safe", last_text) and not re.search(r"not safe", last_text):
+            label = "safe"
+    
+    # Method 3: Count in last lines
+    if label is None:
+        last_text = " ".join(lines[-3:]).lower()
+        safe_matches = len(re.findall(r"\bis safe\b", last_text))
+        harmful_matches = len(re.findall(r"\bharmful\b", last_text)) - len(re.findall(r"not harmful", last_text))
+        
+        if safe_matches > harmful_matches:
+            label = "safe"
+        elif harmful_matches > safe_matches:
+            label = "harmful"
         else:
-            label = 'unknown'
-
-    # Reasoning is everything except the label line
+            label = "unknown"
+    
     reasoning = response.strip()
-
     return reasoning, label
+
+
 
 
 def evaluate_sample(model, tokenizer, sample):
