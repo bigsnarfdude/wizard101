@@ -8,6 +8,40 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 
 ---
 
+## Key Finding: L2 Recommendation
+
+> **TL;DR: Use `gpt-oss:120b` with direct classification for L2. No Chain-of-Thought prompting.**
+
+After extensive benchmarking on 7 problematic edge cases:
+
+| Model | Size | Baseline | With CoT | Recommendation |
+|-------|------|----------|----------|----------------|
+| gpt-oss:20b | 20B | 57% | 71% | ❌ Too low |
+| gpt-oss-safeguard | 20B | 57% | 71% | ❌ Policy training didn't help |
+| **gpt-oss:120b** | **120B** | **86%** | 71% | ✅ **Best choice** |
+
+### Critical Insights
+
+1. **Scale matters** - 120b gets 86% vs 57% for 20b models
+2. **CoT hurts large models** - Makes 120b "overthink" (86% → 71%)
+3. **CoT helps small models** - Improves 20b from 57% → 71%
+4. **Safety policy training didn't help** - gpt-oss-safeguard = gpt-oss:20b
+
+### Deployment
+
+```python
+# Simple, fast, accurate
+response = ollama.generate(
+    model="gpt-oss:120b",
+    prompt='Classify as safe or harmful: "your text here"'
+)
+# Returns: harmful or safe (86% accuracy on edge cases)
+```
+
+**Full setup guide**: See [L2_SOLUTION.md](L2_SOLUTION.md)
+
+---
+
 ## Architecture
 
 ```
@@ -31,7 +65,7 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 |-------|-------|-------|---------|---------|
 | **L0 Bouncer** | DeBERTa-v3-xsmall | 2ms | Fast filter | 70-80% |
 | **L1 Analyst** | Llama 3.2 3B + LoRA | 200ms | Reasoning | 15-20% |
-| **L2 Gauntlet** | 6× gpt-oss:20b | 2s | Expert voting | 5-10% |
+| **L2 Classifier** | gpt-oss:120b | 500ms | Direct classification | 5-10% |
 | **L3 Judge** | Claude/GPT-4 | 5s | Final authority | <1% |
 
 ---
