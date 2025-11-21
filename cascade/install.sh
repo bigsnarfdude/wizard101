@@ -26,10 +26,14 @@ if command -v nvidia-smi &> /dev/null; then
 
     # Check VRAM
     VRAM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | head -1)
-    if [ "$VRAM" -lt 24000 ]; then
+    if [ "$VRAM" -lt 16000 ]; then
         echo ""
-        echo "WARNING: Detected ${VRAM}MB VRAM. Recommended: 24GB+"
-        echo "L1 and higher tiers may not load properly."
+        echo "WARNING: Detected ${VRAM}MB VRAM. Minimum for L1: 16GB"
+        echo "L0 will work, but L1 (GuardReasoner-8B) requires 16GB+"
+    elif [ "$VRAM" -lt 24000 ]; then
+        echo ""
+        echo "INFO: Detected ${VRAM}MB VRAM. Good for L0+L1."
+        echo "Full cascade (L2/L3) recommends 24GB+"
     else
         echo "VRAM: ${VRAM}MB - OK"
     fi
@@ -63,31 +67,11 @@ snapshot_download(
 print('L0 Bouncer downloaded successfully!')
 "
 
-# Download L1 base model and LoRA
+# Note: L1 uses GuardReasoner-8B which downloads automatically on first use
 echo ""
-echo "Downloading L1 Analyst base model (Llama 3.2 3B, ~2GB)..."
-python3 -c "
-from huggingface_hub import snapshot_download
-snapshot_download(
-    repo_id='unsloth/Llama-3.2-3B-Instruct',
-    local_dir='./models/llama-3.2-3b',
-    local_dir_use_symlinks=False,
-    ignore_patterns=['*.gguf', '*.ggml']
-)
-print('Llama 3.2 3B downloaded successfully!')
-"
-
-echo ""
-echo "Downloading L1 LoRA adapter (GuardReasoner, ~50MB)..."
-python3 -c "
-from huggingface_hub import snapshot_download
-snapshot_download(
-    repo_id='vincentoh/Llama-3.2-3B-GuardReasoner-Exp18',
-    local_dir='./models/guardreasoner_lora',
-    local_dir_use_symlinks=False
-)
-print('GuardReasoner LoRA downloaded successfully!')
-"
+echo "L1 Analyst uses GuardReasoner-8B (yueliu1999/GuardReasoner-8B)"
+echo "It will be downloaded automatically on first use (~5GB)"
+echo "Paper: 'GuardReasoner: Towards Reasoning-based LLM Safeguards' (arXiv:2501.18492)"
 
 echo ""
 echo "=============================================="
@@ -128,6 +112,6 @@ echo "  python3 -c 'from cascade import SafetyCascade; c = SafetyCascade(); prin
 echo ""
 echo "Requirements:"
 echo "  - L0 only: 4GB+ VRAM"
-echo "  - L0+L1: 8GB+ VRAM"
+echo "  - L0+L1: 16GB+ VRAM (GuardReasoner-8B)"
 echo "  - Full cascade: 24GB+ VRAM + Ollama"
 echo ""

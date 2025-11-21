@@ -1,30 +1,26 @@
 #!/usr/bin/env python3
 """
-L1 Analyst - Reasoning-based Safety Analysis
+L1 Analyst - Using Official GuardReasoner-8B
 
-Uses fine-tuned Llama 3.2 3B with LoRA (Exp 18 R-SFT).
-Provides step-by-step reasoning for safety classification.
+Uses yueliu1999/GuardReasoner-8B pretrained model.
+Paper: "GuardReasoner: Towards Reasoning-based LLM Safeguards" (arXiv:2501.18492)
+Expected performance: ~84% F1 on safety benchmarks
 """
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-from peft import PeftModel
 
 
 class L1Analyst:
-    """Reasoning-based safety analyst using fine-tuned Llama 3.2 3B."""
+    """Reasoning-based safety analyst using GuardReasoner-8B."""
 
-    def __init__(self,
-                 base_model="./models/llama-3.2-3b",
-                 lora_path="./models/guardreasoner_lora"):
-
+    def __init__(self, model_id="yueliu1999/GuardReasoner-8B"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        print(f"Loading L1 Analyst...")
-        print(f"  Base: {base_model}")
-        print(f"  LoRA: {lora_path}")
+        print(f"Loading L1 Analyst (GuardReasoner-8B)...")
+        print(f"  Model: {model_id}")
 
-        # Quantization config for memory efficiency
+        # Quantization config for memory efficiency (8B needs ~16GB, 4bit needs ~4GB)
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
@@ -32,38 +28,39 @@ class L1Analyst:
             bnb_4bit_use_double_quant=True,
         )
 
-        # Load base model
-        self.tokenizer = AutoTokenizer.from_pretrained(base_model)
+        # Load tokenizer
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
+        # Load model
         self.model = AutoModelForCausalLM.from_pretrained(
-            base_model,
+            model_id,
             quantization_config=bnb_config,
             device_map="auto",
             torch_dtype=torch.float16,
+            trust_remote_code=True,
         )
-
-        # Load LoRA adapter
-        self.model = PeftModel.from_pretrained(self.model, lora_path)
         self.model.eval()
 
         print(f"  L1 ready on {self.device}")
 
     def _build_prompt(self, text):
-        """Build the prompt for safety analysis."""
+        """Build the prompt using GuardReasoner's format."""
+        # GuardReasoner uses a specific format for reasoning
         system = """You are a content safety expert. Analyze the request and determine if it is safe or harmful.
 
 Think step-by-step:
-1. Identify what is being requested
-2. Consider potential harms
-3. Make your final classification
+1. What is being requested?
+2. What are the potential harms?
+3. Does this violate safety policies?
 
-End with: "Therefore, the content is [safe/harmful]"."""
+End your analysis with exactly: "Request: harmful" or "Request: unharmful"."""
 
+        # Use Llama-3 instruct format (GuardReasoner-8B is based on Llama-3-8B-Instruct)
         return f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
-{system}<|eot_id|><|start_header_id|>user<|end_header_id|>
+{system}<|eot_id|><|start_header_id|>user<|end_header_id|}
 
 {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
@@ -105,7 +102,7 @@ End with: "Therefore, the content is [safe/harmful]"."""
         # Extract label from response - GuardReasoner format
         response_lower = response.lower()
 
-        # GuardReasoner format: "Request: harmful" or "Request: unharmful"
+        # Primary GuardReasoner format: "Request: harmful" or "Request: unharmful"
         if "request: harmful" in response_lower:
             label = "harmful"
             confidence = 0.9
@@ -115,11 +112,17 @@ End with: "Therefore, the content is [safe/harmful]"."""
         elif "request: benign" in response_lower:
             label = "safe"
             confidence = 0.9
-        # Fallback patterns
+        # Alternative formats
         elif "therefore, the content is harmful" in response_lower:
             label = "harmful"
             confidence = 0.85
         elif "therefore, the content is safe" in response_lower:
+            label = "safe"
+            confidence = 0.85
+        elif "this is harmful" in response_lower:
+            label = "harmful"
+            confidence = 0.85
+        elif "this is safe" in response_lower or "this is unharmful" in response_lower:
             label = "safe"
             confidence = 0.85
         elif "the content is harmful" in response_lower:
@@ -133,11 +136,13 @@ End with: "Therefore, the content is [safe/harmful]"."""
             harmful_count = (response_lower.count("harmful") +
                            response_lower.count("unsafe") +
                            response_lower.count("dangerous") +
-                           response_lower.count("malicious"))
+                           response_lower.count("malicious") +
+                           response_lower.count("illegal"))
             safe_count = (response_lower.count("safe") +
                         response_lower.count("benign") +
                         response_lower.count("harmless") +
-                        response_lower.count("unharmful"))
+                        response_lower.count("unharmful") +
+                        response_lower.count("legitimate"))
 
             if harmful_count > safe_count:
                 label = "harmful"

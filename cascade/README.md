@@ -11,7 +11,7 @@ A multi-tier content safety classification system that balances speed, accuracy,
 | Tier | Minimum VRAM | Recommended VRAM | Notes |
 |------|--------------|------------------|-------|
 | L0 only | 4GB | 8GB | DeBERTa classifier |
-| L0 + L1 | 8GB | 16GB | Adds Llama 3.2 3B |
+| L0 + L1 | **16GB** | 24GB | Adds GuardReasoner 8B |
 | Full cascade | **24GB** | 48GB | Includes L2/L3 with Ollama |
 
 ### Software
@@ -71,7 +71,7 @@ Input → L0 Bouncer (6ms, 22M params)
            │
            └─ Uncertain (30%) ↓
                               │
-                        L1 Analyst (50ms, 3B params)
+                        L1 Analyst (100ms, 8B params)
                               │
                               ├─ Confident (75%) → Return result
                               │
@@ -93,7 +93,7 @@ Input → L0 Bouncer (6ms, 22M params)
 | Tier | Model | Size | Latency | Purpose |
 |------|-------|------|---------|---------|
 | **L0 Bouncer** | DeBERTa-v3-xsmall | 22M | ~6ms | Fast binary filter |
-| **L1 Analyst** | Llama 3.2 3B + LoRA | 3B | ~50ms | Reasoning-based analysis |
+| **L1 Analyst** | GuardReasoner-8B | 8B | ~100ms | Reasoning-based analysis |
 | **L2 Gauntlet** | gpt-oss:20b × 6 | 20B | ~200ms | Multi-expert voting |
 | **L3 Judge** | gpt-oss:120b | 120B | ~2s | Final authority |
 
@@ -115,7 +115,7 @@ Input → L0 Bouncer (6ms, 22M params)
 | Scenario | Typical Latency | Traffic % |
 |----------|-----------------|-----------|
 | Clear safe/harmful | 6ms | 70% |
-| Needs reasoning | 50-60ms | 25% |
+| Needs reasoning | 100-150ms | 25% |
 | Expert review | 200-300ms | 4% |
 | Final judge | 2-3s | <1% |
 
@@ -152,8 +152,9 @@ Models are available on HuggingFace:
 
 ### L1 Analyst
 
-- Base: `unsloth/Llama-3.2-3B-Instruct`
-- LoRA: [vincentoh/Llama-3.2-3B-GuardReasoner-Exp18](https://huggingface.co/vincentoh/Llama-3.2-3B-GuardReasoner-Exp18)
+- Model: [yueliu1999/GuardReasoner-8B](https://huggingface.co/yueliu1999/GuardReasoner-8B)
+- Paper: "GuardReasoner: Towards Reasoning-based LLM Safeguards" (arXiv:2501.18492)
+- Expected F1: ~84% on safety benchmarks
 
 ## Ollama Setup
 
@@ -213,7 +214,7 @@ l0 = L0Bouncer(model_path="./models/l0_bouncer")
 result = l0.classify("text")  # Returns dict with label, confidence, probs
 
 # L1: Reasoning analyst
-l1 = L1Analyst(base_model="...", lora_path="...")
+l1 = L1Analyst(model_id="yueliu1999/GuardReasoner-8B")
 result = l1.analyze("text")  # Returns dict with label, reasoning, confidence
 
 # L2: Expert voting
@@ -255,7 +256,7 @@ cascade/
 ├── __init__.py           # Package exports
 ├── cascade.py            # Main SafetyCascade class
 ├── l0_bouncer.py         # L0: DeBERTa classifier
-├── l1_analyst.py         # L1: Llama reasoning
+├── l1_analyst.py         # L1: GuardReasoner-8B
 ├── l2_gauntlet.py        # L2: Expert voting
 ├── l3_judge.py           # L3: Final authority
 ├── requirements.txt      # Python dependencies
@@ -263,9 +264,7 @@ cascade/
 ├── example.py            # Usage examples
 ├── README.md             # This file
 └── models/               # Downloaded models
-    ├── l0_bouncer/
-    ├── llama-3.2-3b/
-    └── guardreasoner_lora/
+    └── l0_bouncer/
 ```
 
 ## Citation
