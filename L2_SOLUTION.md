@@ -89,7 +89,7 @@ ollama list
 The model is already deployed on nigel:
 
 ```bash
-ssh vincent@nigel.birs.ca
+ssh user@example.com
 ollama list  # Should show gpt-oss:120b (65GB)
 ```
 
