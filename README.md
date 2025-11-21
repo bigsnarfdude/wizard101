@@ -17,7 +17,7 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 | Option | Model | Accuracy | VRAM | Best For |
 |--------|-------|----------|------|----------|
 | **Best** | gpt-oss:120b direct | 86% | 65GB | Production |
-| **Good** | Gauntlet (6× 20b voting) | ~71% | 13GB | Limited VRAM |
+| **Good** | Gauntlet (6× 20b voting) | 71% | 13GB | Limited VRAM |
 | **Acceptable** | gpt-oss:20b + CoT | 71% | 13GB | Single model |
 | **Budget** | gpt-oss-safeguard | 57% | 13GB | Speed priority |
 
