@@ -22,11 +22,13 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 
 ### Key Findings
 
-1. **Harmony template critical** - gpt-oss models need `<|start|>user<|message|>...<|end|>` format
-2. **Safeguard 20b = 120b accuracy** - Same 87.5% at 6.7x faster, 5x less VRAM
-3. **0.9 threshold optimal** - Sends 5.8% to L1, catches 31 vs 39 dangerous FN
-4. **512 tokens sufficient** - 4x faster L1 with same accuracy
-5. **L1 adds +29.5% value** - Critical layer for correcting L0 mistakes
+1. **L1 is irreplaceable** - GuardReasoner-8B adds +29.5% value; L2 alone scores 59% on hard cases
+2. **Harmony template critical** - gpt-oss models need `<|start|>user<|message|>...<|end|>` format
+3. **Safeguard 20b = 120b accuracy** - Same 87.5% at 6.7x faster, 5x less VRAM
+4. **0.9 threshold optimal** - Sends 5.8% to L1, catches 31 vs 39 dangerous FN
+5. **512 tokens sufficient** - 4x faster L1 with same accuracy
+
+> **Why L1 matters**: Tested skipping L1 → L2 scored 59% (same as L0). Hard cases need reasoning, not classification. No shortcuts.
 
 ### Quick Deploy
 
