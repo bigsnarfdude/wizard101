@@ -259,7 +259,6 @@ Provide your reasoning and then classify as harmful or safe."""
 
     # Unload model
     del model
-    del base_model
     del tokenizer
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
