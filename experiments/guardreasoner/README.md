@@ -143,7 +143,7 @@ guardreasoner/
 cd /Users/vincent/development/wizard101
 
 # Ollama running on nigel (check connection)
-ssh vincent@nigel.birs.ca "curl -s http://localhost:11434/api/tags | jq '.models[].name'"
+ssh user@server "curl -s http://localhost:11434/api/tags | jq '.models[].name'"
 
 # Verify WildGuard dataset exists
 ls -lh experiments/wildguard_full_benchmark.json
@@ -152,7 +152,7 @@ ls -lh experiments/wildguard_full_benchmark.json
 ### Run Experiment 20 (First experiment)
 ```bash
 # On nigel (via screen)
-ssh vincent@nigel.birs.ca
+ssh user@server
 cd ~/wizard101/experiments/guardreasoner
 screen -S guardreasoner
 python3 scripts/experiment_20_single_step_reasoning.py > results/exp_20.log 2>&1
@@ -164,10 +164,10 @@ python3 scripts/experiment_20_single_step_reasoning.py > results/exp_20.log 2>&1
 ### Monitor Progress
 ```bash
 # From local machine
-ssh vincent@nigel.birs.ca "tail -f ~/wizard101/experiments/guardreasoner/results/exp_20.log"
+ssh user@server "tail -f ~/wizard101/experiments/guardreasoner/results/exp_20.log"
 
 # Check completion
-ssh vincent@nigel.birs.ca "grep 'EXPERIMENT 20 RESULTS' ~/wizard101/experiments/guardreasoner/results/exp_20.log"
+ssh user@server "grep 'EXPERIMENT 20 RESULTS' ~/wizard101/experiments/guardreasoner/results/exp_20.log"
 ```
 
 ---

@@ -213,16 +213,16 @@ vincentoh/guardreasoner-llama3.2-3b-lora-1epoch
 ### Monitor Evaluation
 ```bash
 # Check progress
-ssh vincent@nigel.birs.ca "tail -f ~/wizard101/experiments/guardreasoner/logs/exp_18_quick_eval_v2.log"
+ssh user@server "tail -f ~/wizard101/experiments/guardreasoner/logs/exp_18_quick_eval_v2.log"
 
 # Check results
-ssh vincent@nigel.birs.ca "cat ~/wizard101/experiments/guardreasoner/results/exp_18_quick_eval.json"
+ssh user@server "cat ~/wizard101/experiments/guardreasoner/results/exp_18_quick_eval.json"
 ```
 
 ### Upload Scripts
 ```bash
 # From local machine
-scp experiments/guardreasoner/script.py vincent@nigel.birs.ca:~/wizard101/experiments/guardreasoner/
+scp experiments/guardreasoner/script.py user@server:~/wizard101/experiments/guardreasoner/
 ```
 
 ### Run Training

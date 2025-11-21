@@ -175,7 +175,7 @@ cp scripts/experiment_18_train_unsloth.py scripts/experiment_19_train_full_datas
 ### 4. Start Training
 ```bash
 # On nigel.birs.ca (or wherever you're training)
-ssh vincent@nigel.birs.ca
+ssh user@server
 cd ~/wizard101/experiments/guardreasoner
 
 # Start in screen session
