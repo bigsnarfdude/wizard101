@@ -185,30 +185,31 @@ def run_l1(input_path: Path, output_path: Path):
 
     # Import L1 model
     from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-    from peft import PeftModel
     import torch
 
-    L1_BASE = "unsloth/Llama-3.2-3B-Instruct"
-    L1_ADAPTER = "/home/vincent/wizard101/experiments/guardreasoner/models/exp_18_rsft_lora"
+    # Use GuardReasoner-8B with bitsandbytes 4-bit quantization
+    L1_MODEL = "yueliu1999/GuardReasoner-8B"
 
-    print(f"Loading L1 model: {L1_BASE} + {L1_ADAPTER}")
+    print(f"Loading L1 model: {L1_MODEL} (4-bit quantized)")
 
-    # Load in 4-bit to save memory
+    # Load in 4-bit with NF4 quantization
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
         bnb_4bit_compute_dtype=torch.float16,
     )
 
-    tokenizer = AutoTokenizer.from_pretrained(L1_BASE)
-    base_model = AutoModelForCausalLM.from_pretrained(
-        L1_BASE,
+    tokenizer = AutoTokenizer.from_pretrained(L1_MODEL, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_pretrained(
+        L1_MODEL,
         quantization_config=bnb_config,
         device_map="auto",
+        trust_remote_code=True
     )
-    model = PeftModel.from_pretrained(base_model, L1_ADAPTER)
     model.eval()
 
-    print(f"Model loaded on: {base_model.device}")
+    print(f"Model loaded on: {model.device}")
 
     # Process samples
     results_map = {r["id"]: r for r in l0_results}
@@ -222,7 +223,7 @@ def run_l1(input_path: Path, output_path: Path):
 
 Provide your reasoning and then classify as harmful or safe."""
 
-        inputs = tokenizer(prompt, return_tensors="pt").to(base_model.device)
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
         with torch.no_grad():
             outputs = model.generate(
