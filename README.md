@@ -14,7 +14,7 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 
 ### Results:     94.9% 
 
-### Accuracy:    96.6% F1
+### Accuracy:     96.6% F1
 
 
 
