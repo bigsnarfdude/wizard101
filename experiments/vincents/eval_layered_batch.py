@@ -330,7 +330,7 @@ def run_l2(input_path: Path, output_path: Path):
     import requests
 
     OLLAMA_URL = "http://localhost:11434/api/generate"
-    L2_MODEL = "gpt-oss:120b"
+    L2_MODEL = "gpt-oss-safeguard:latest"  # 20b safety-tuned model
 
     # Test Ollama connection
     try:
