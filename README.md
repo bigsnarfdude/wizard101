@@ -12,7 +12,11 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 
 > **TL;DR: DeBERTa → GuardReasoner-8B → gpt-oss-safeguard:20b with Harmony template**
 
-### Results: 94.9% Accuracy, 96.6% F1
+### Results: 94.9% 
+
+### Accuracy, 96.6% F1
+
+
 
 | Layer | Model | Speed | VRAM | Accuracy |
 |-------|-------|-------|------|----------|
