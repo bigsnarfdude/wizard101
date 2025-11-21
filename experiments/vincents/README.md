@@ -21,6 +21,7 @@ chmod +x *.sh
 ```
 vincents/
 ├── README.md              # This file
+├── eval_layered_batch.py  # Main evaluation code (self-contained copy)
 ├── run_all.sh             # Full cascade evaluation
 ├── run_l2_standalone.sh   # L2 only (gpt-oss:120b)
 ├── run_blindspot_test.sh  # Blindspot coverage test
@@ -57,21 +58,23 @@ ollama list
 ## Manual Layer Commands
 
 ```bash
+cd experiments/vincents
 source ../guardreasoner/venv/bin/activate
-cd ..
 
 # L0
-python eval_layered_batch.py --layer l0 --benchmark all --output vincents/outputs/l0_results.json
+python eval_layered_batch.py --layer l0 --benchmark all
 
 # L1
-python eval_layered_batch.py --layer l1 --input vincents/outputs/l0_results.json --output vincents/outputs/l1_results.json
+python eval_layered_batch.py --layer l1
 
 # L2
-python eval_layered_batch.py --layer l2 --input vincents/outputs/l1_results.json --output vincents/outputs/l2_results.json
+python eval_layered_batch.py --layer l2
 
 # Combine
-python eval_layered_batch.py --combine --input vincents/outputs/l2_results.json --output vincents/outputs/final_scores.json
+python eval_layered_batch.py --combine
 ```
+
+All outputs automatically go to `./outputs/`.
 
 ## Check Results
 
