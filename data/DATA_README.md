@@ -35,7 +35,11 @@ experiments/guardreasoner/guardreasoner_data/  # Large training datasets (>100MB
 ## Training Datasets
 
 ### `all_combined.json` (127,544 samples, 357 MB)
-**L0 BOUNCER TRAINING DATASET** - This is what we trained the L0 classifier on. Combined from all sources with 3-task reasoning format.
+**PRIMARY TRAINING DATASET** - Used to train both L0 and L1 models:
+- **L0 Bouncer**: Trained as binary classifier (harmful/safe)
+- **L1 Analyst**: Trained with R-SFT (Reasoning Supervised Fine-Tuning) to generate reasoning traces + labels
+
+Combined from all sources with 3-task reasoning format.
 
 Format:
 ```json
