@@ -94,8 +94,8 @@ Input → L0 Bouncer (6ms, 22M params)
 |------|-------|------|---------|---------|
 | **L0 Bouncer** | DeBERTa-v3-xsmall | 22M | ~6ms | Fast binary filter |
 | **L1 Analyst** | GuardReasoner-8B | 8B | ~100ms | Reasoning-based analysis |
-| **L2 Gauntlet** | gpt-oss:20b × 6 | 20B | ~200ms | Multi-expert voting |
-| **L3 Judge** | gpt-oss:120b | 120B | ~2s | Final authority |
+| **L2 Gauntlet** | gpt-oss-safeguard × 6 | 20B | ~200ms | Multi-expert voting |
+| **L3 Judge** | gpt-oss-safeguard:120b | 120B | ~2s | Final authority |
 
 ## Performance
 
@@ -165,9 +165,9 @@ L2 and L3 require [Ollama](https://ollama.ai) running locally:
 # Start Ollama service
 ollama serve
 
-# Pull models
-ollama pull gpt-oss:20b   # For L2 Gauntlet (~12GB)
-ollama pull gpt-oss:120b  # For L3 Judge (~70GB, optional)
+# Pull models (safeguard-trained versions perform better)
+ollama pull gpt-oss-safeguard:latest  # For L2 Gauntlet (~13GB)
+ollama pull gpt-oss-safeguard:120b    # For L3 Judge (~65GB, optional)
 ```
 
 ## API Reference

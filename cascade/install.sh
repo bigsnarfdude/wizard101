@@ -83,20 +83,20 @@ if command -v ollama &> /dev/null; then
     echo "Ollama found!"
 
     echo ""
-    echo "Pulling gpt-oss:20b for L2 Gauntlet..."
-    ollama pull gpt-oss:20b || echo "WARNING: Could not pull gpt-oss:20b"
+    echo "Pulling gpt-oss-safeguard for L2 Gauntlet..."
+    ollama pull gpt-oss-safeguard:latest || echo "WARNING: Could not pull gpt-oss-safeguard:latest"
 
     echo ""
-    echo "Note: For L3 Judge, you'll need gpt-oss:120b"
-    echo "Run: ollama pull gpt-oss:120b (requires ~70GB)"
+    echo "Note: For L3 Judge, you'll need gpt-oss-safeguard:120b"
+    echo "Run: ollama pull gpt-oss-safeguard:120b (requires ~65GB)"
 else
     echo ""
     echo "WARNING: Ollama not found. L2 and L3 tiers will not work."
     echo "Install Ollama from: https://ollama.ai"
     echo ""
     echo "After installing Ollama, run:"
-    echo "  ollama pull gpt-oss:20b   # For L2 Gauntlet"
-    echo "  ollama pull gpt-oss:120b  # For L3 Judge (optional)"
+    echo "  ollama pull gpt-oss-safeguard:latest  # For L2 Gauntlet"
+    echo "  ollama pull gpt-oss-safeguard:120b    # For L3 Judge (optional)"
 fi
 
 echo ""

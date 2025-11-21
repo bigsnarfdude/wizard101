@@ -42,6 +42,35 @@ def clear_gpu():
     gc.collect()
 
 
+def unload_ollama_models():
+    """Force Ollama to unload all models from VRAM."""
+    import requests
+    try:
+        # Get list of loaded models
+        response = requests.get("http://localhost:11434/api/tags", timeout=5)
+        if response.status_code != 200:
+            return
+
+        # Try to unload by making a dummy request that forces model swap
+        # This is a hack - Ollama doesn't have explicit unload API
+        print("  Requesting Ollama to release VRAM...")
+
+        # Set keep_alive to 0 to unload immediately after use
+        requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "gpt-oss:20b",
+                "prompt": "",
+                "keep_alive": 0,  # Unload immediately
+            },
+            timeout=30
+        )
+        print("  Ollama models set to unload")
+        time.sleep(5)  # Give Ollama time to unload
+    except Exception as e:
+        print(f"  Could not unload Ollama: {e}")
+
+
 def wait_for_ollama_unload(seconds=300):
     """Wait for Ollama to unload model from VRAM."""
     print(f"\n⏳ Waiting {seconds}s for Ollama to unload model from VRAM...")
@@ -129,6 +158,10 @@ def run_l1_batch(l0_results, uncertain_idx, threshold=0.7):
     print("\n" + "="*60)
     print("STAGE 2: L1 ANALYST (Llama 3.2 3B)")
     print("="*60)
+
+    # Force unload any Ollama models taking VRAM
+    unload_ollama_models()
+    clear_gpu()
 
     from l1_analyst import L1Analyst
     l1 = L1Analyst()
@@ -355,7 +388,7 @@ def main():
     parser.add_argument("--samples", type=int, default=None, help="Limit samples (default: all)")
     parser.add_argument("--l0-threshold", type=float, default=0.7, help="L0 confidence threshold")
     parser.add_argument("--l1-threshold", type=float, default=0.7, help="L1 confidence threshold")
-    parser.add_argument("--ollama-wait", type=int, default=300, help="Seconds to wait for Ollama unload")
+    parser.add_argument("--ollama-wait", type=int, default=360, help="Seconds to wait for Ollama unload (default 6 min)")
     parser.add_argument("--skip-l3", action="store_true", help="Skip L3 audit")
     args = parser.parse_args()
 
