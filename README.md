@@ -47,8 +47,6 @@ response = ollama.generate(
 # Returns: harmful or safe (86% accuracy on edge cases)
 ```
 
-**Full setup guide**: See [L2_SOLUTION.md](L2_SOLUTION.md)
-
 ---
 
 ## Architecture
