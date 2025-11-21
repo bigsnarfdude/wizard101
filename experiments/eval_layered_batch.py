@@ -86,7 +86,7 @@ def run_l0(samples: list, output_path: Path):
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     import torch
 
-    L0_MODEL = "vincentoh/l0-bouncer-v2"  # Update with your model
+    L0_MODEL = "/home/vincent/wizard101/experiments/cascade/models/l0_bouncer_full"
 
     print(f"Loading L0 model: {L0_MODEL}")
     tokenizer = AutoTokenizer.from_pretrained(L0_MODEL)
@@ -188,7 +188,7 @@ def run_l1(input_path: Path, output_path: Path):
     import torch
 
     L1_BASE = "unsloth/Llama-3.2-3B-Instruct"
-    L1_ADAPTER = "models/exp_18_rsft_lora"  # Update with your adapter path
+    L1_ADAPTER = "/home/vincent/wizard101/experiments/guardreasoner/models/exp_18_rsft_lora"
 
     print(f"Loading L1 model: {L1_BASE} + {L1_ADAPTER}")
 
