@@ -28,11 +28,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-# Paths to benchmark files
+# Paths to benchmark files (relative to repo root)
+REPO_ROOT = Path(__file__).parent.parent
 BENCHMARKS = {
-    "harmbench": "data/benchmark/harmbench_test.json",
-    "xstest": "data/evaluation/xstest.json",
-    "simplesafety": "data/benchmark/simplesafetytests.json",
+    "harmbench": REPO_ROOT / "data/benchmark/harmbench_test.json",
+    "xstest": REPO_ROOT / "data/evaluation/xstest.json",
+    "simplesafety": REPO_ROOT / "data/benchmark/simplesafetytests.json",
 }
 
 RESULTS_DIR = Path("cascade_evaluations")
