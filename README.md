@@ -31,6 +31,7 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 3. **Safeguard 20b = 120b accuracy** - Same 87.5% at 6.7x faster, 5x less VRAM
 4. **0.9 threshold optimal** - Sends 5.8% to L1, catches 31 vs 39 dangerous FN
 5. **512 tokens sufficient** - 4x faster L1 with same accuracy
+6. **L1 speed is reasoning-bound** - Ollama conversion tested: same ~9s/sample. Bottleneck is 512-token reasoning output, not runtime
 
 > **Why L1 matters**: Tested skipping L1 → L2 scored 59% (same as L0). Hard cases need reasoning, not classification. No shortcuts.
 
