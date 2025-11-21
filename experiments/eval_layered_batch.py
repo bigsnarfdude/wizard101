@@ -237,7 +237,7 @@ You must think step by step. Keep consistency between the reasoning and the Answ
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
-                max_new_tokens=2048,  # Official uses 2048
+                max_new_tokens=512,   # Reduced from 2048 for speed (most responses < 512)
                 temperature=0.0,      # Official uses greedy decoding
                 do_sample=False,
                 pad_token_id=tokenizer.eos_token_id,
