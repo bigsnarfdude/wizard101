@@ -280,7 +280,3 @@ cascade/
 ## License
 
 MIT License
-
-## Contributing
-
-Issues and PRs welcome at [github.com/bigsnarfdude/wizard101](https://github.com/bigsnarfdude/wizard101)
