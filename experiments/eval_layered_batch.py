@@ -128,7 +128,7 @@ def run_l0(samples: list, output_path: Path):
             "l0_confidence": confidence,
             "l0_safe_prob": safe_prob,
             "l0_harmful_prob": harmful_prob,
-            "needs_l1": confidence < 0.8,  # Threshold for escalation
+            "needs_l1": confidence < 0.7,  # Threshold for escalation (lowered from 0.8)
         }
         results.append(result)
 
