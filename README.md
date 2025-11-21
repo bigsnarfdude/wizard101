@@ -71,7 +71,7 @@ response = ollama.generate(
 | Layer | Model | Speed | Purpose | Catches |
 |-------|-------|-------|---------|---------|
 | **L0 Bouncer** | DeBERTa-v3-xsmall | 2ms | Fast filter | 70-80% |
-| **L1 Analyst** | Llama 3.2 3B + LoRA | 200ms | Reasoning | 15-20% |
+| **L1 Analyst** | GuardReasoner-8B | 8s | Reasoning | 15-20% |
 | **L2 Classifier** | gpt-oss:120b | 500ms | Direct classification | 5-10% |
 | **L3 Judge** | Claude/GPT-4 | 5s | Final authority | <1% |
 
@@ -288,19 +288,21 @@ result = l1.analyze("How to pick a lock")
 # {'label': 'harmful', 'confidence': 0.9, 'reasoning': '...step-by-step...'}
 ```
 
-### L2 Gauntlet (`l2_gauntlet.py`)
+### L2 Classifier (`l2_gauntlet.py`)
 
-**Architecture**: 6 expert personas using gpt-oss:20b
-**Method**: Serial voting with consensus detection
-**Speed**: ~2s per analysis (6 sequential calls)
+**Architecture**: gpt-oss:120b direct classification (no CoT)
+**Method**: Direct classification without chain-of-thought
+**Speed**: ~500ms per analysis
 
 ```python
 from l2_gauntlet import L2Gauntlet
 
 l2 = L2Gauntlet()
 result = l2.analyze("edge case prompt")
-# {'label': 'harmful', 'votes': {'harmful': 5, 'safe': 1}, 'consensus': True}
+# {'label': 'harmful', 'confidence': 0.95}
 ```
+
+**Note**: 120b with direct prompting outperforms 6-expert voting (86% vs 71% on edge cases). CoT hurts large models.
 
 ---
 
