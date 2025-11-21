@@ -85,18 +85,20 @@ response = ollama.generate(
 
 | Metric | Value |
 |--------|-------|
-| **Accuracy** | 93.9% |
-| **Precision** | 97.1% |
-| **Recall** | 94.9% |
+| **Accuracy** | 94.0% |
+| **Precision** | 96.9% |
+| **Recall** | 95.1% |
 | **F1 Score** | 96.0% |
 
 | Benchmark | Samples | Accuracy | F1 |
 |-----------|---------|----------|-----|
 | HarmBench | 500 | 99.6% | 99.8% |
-| SimpleSafetyTests | 100 | 95.0% | 97.4% |
-| XSTest (over-refusal) | 450 | 87.3% | 85.3% |
+| SimpleSafetyTests | 100 | 96.0% | 98.0% |
+| XSTest (over-refusal) | 450 | 87.3% | 85.4% |
 
-**Key Finding**: Official GuardReasoner prompt format critical for L1 performance (+29.7% accuracy improvement).
+**Key Findings**:
+- Official GuardReasoner prompt format critical for L1 performance (+29.7% accuracy improvement)
+- Speed optimization: Reducing max_new_tokens from 2048→512 improved L1 inference 4x faster while maintaining accuracy
 
 ### GuardReasoner Test Set (1,000 samples)
 
