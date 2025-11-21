@@ -161,8 +161,6 @@ Models are available on HuggingFace:
 L2 and L3 require [Ollama](https://ollama.ai) running locally:
 
 ```bash
-# Install Ollama (macOS)
-brew install ollama
 
 # Start Ollama service
 ollama serve
