@@ -296,9 +296,9 @@ result = l1.analyze("How to pick a lock")
 
 ### L2 Classifier (`l2_gauntlet.py`)
 
-**Architecture**: gpt-oss:120b direct classification (no CoT)
-**Method**: Direct classification without chain-of-thought
-**Speed**: ~500ms per analysis
+**Architecture**: gpt-oss-safeguard:20b (safety-tuned)
+**Method**: Direct classification with Harmony template
+**Speed**: ~0.18s per analysis
 
 ```python
 from l2_gauntlet import L2Gauntlet
@@ -308,7 +308,7 @@ result = l2.analyze("edge case prompt")
 # {'label': 'harmful', 'confidence': 0.95}
 ```
 
-**Note**: 120b with direct prompting outperforms 6-expert voting (86% vs 71% on edge cases). CoT hurts large models.
+**Note**: Safeguard 20b matches 120b accuracy (87.5%) at 6.7x faster speed. Requires Harmony template format.
 
 ---
 
