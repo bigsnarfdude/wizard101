@@ -276,9 +276,9 @@ result = l0.classify("What is the capital of France?")
 
 ### L1 Analyst (`l1_analyst.py`)
 
-**Architecture**: Llama 3.2 3B + LoRA (4-bit quantized)
-**Training**: R-SFT on GuardReasoner reasoning traces
-**Speed**: ~200ms per analysis
+**Architecture**: GuardReasoner-8B (4-bit quantized with bitsandbytes)
+**Training**: Official GuardReasoner prompt format
+**Speed**: ~8s per analysis (with 512 max tokens)
 
 ```python
 from l1_analyst import L1Analyst
