@@ -79,6 +79,25 @@ response = ollama.generate(
 
 ## Benchmark Results
 
+### Public Safety Benchmarks (1,050 samples) - November 2025
+
+**HarmBench + XSTest + SimpleSafetyTests**
+
+| Metric | Value |
+|--------|-------|
+| **Accuracy** | 93.9% |
+| **Precision** | 97.1% |
+| **Recall** | 94.9% |
+| **F1 Score** | 96.0% |
+
+| Benchmark | Samples | Accuracy | F1 |
+|-----------|---------|----------|-----|
+| HarmBench | 500 | 99.6% | 99.8% |
+| SimpleSafetyTests | 100 | 95.0% | 97.4% |
+| XSTest (over-refusal) | 450 | 87.3% | 85.3% |
+
+**Key Finding**: Official GuardReasoner prompt format critical for L1 performance (+29.7% accuracy improvement).
+
 ### GuardReasoner Test Set (1,000 samples)
 
 | Metric | Value |
