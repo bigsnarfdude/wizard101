@@ -302,12 +302,12 @@ You must think step by step. Keep consistency between the reasoning and the Answ
 
 def run_l2(input_path: Path, output_path: Path):
     """
-    Run L2 Gauntlet on samples where L0 and L1 disagreed.
+    Run L2 Classifier on samples where L0 and L1 disagreed.
 
-    L2 uses policy-specific analysis.
+    L2 uses gpt-oss:120b with direct classification (no CoT).
     """
     print(f"\n{'='*60}")
-    print("LAYER 2: GAUNTLET")
+    print("LAYER 2: CLASSIFIER (gpt-oss:120b)")
     print(f"{'='*60}")
 
     # Load L1 results
@@ -324,17 +324,95 @@ def run_l2(input_path: Path, output_path: Path):
             json.dump(l1_results, f, indent=2)
         return l1_results
 
-    # L2 implementation - policy gauntlet
-    # This would load your policy models and run multi-policy analysis
-    # For now, using L1 prediction as final
+    # Check if Ollama is available
+    import requests
+
+    OLLAMA_URL = "http://localhost:11434/api/generate"
+    L2_MODEL = "gpt-oss:120b"
+
+    # Test Ollama connection
+    try:
+        test_response = requests.post(
+            OLLAMA_URL,
+            json={"model": L2_MODEL, "prompt": "test", "stream": False},
+            timeout=10
+        )
+        if test_response.status_code != 200:
+            print(f"Warning: Ollama not responding properly. Falling back to L1.")
+            # Fallback to L1
+            results_map = {r["id"]: r for r in l1_results}
+            for sample in samples:
+                results_map[sample["id"]]["l2_prediction"] = sample.get("l1_prediction", sample["l0_prediction"])
+                results_map[sample["id"]]["l2_fallback"] = True
+            final_results = list(results_map.values())
+            with open(output_path, "w") as f:
+                json.dump(final_results, f, indent=2)
+            return final_results
+        print(f"Ollama connected, using {L2_MODEL}")
+    except Exception as e:
+        print(f"Warning: Could not connect to Ollama: {e}")
+        print("Falling back to L1 predictions.")
+        results_map = {r["id"]: r for r in l1_results}
+        for sample in samples:
+            results_map[sample["id"]]["l2_prediction"] = sample.get("l1_prediction", sample["l0_prediction"])
+            results_map[sample["id"]]["l2_fallback"] = True
+        final_results = list(results_map.values())
+        with open(output_path, "w") as f:
+            json.dump(final_results, f, indent=2)
+        return final_results
 
     results_map = {r["id"]: r for r in l1_results}
+    start_time = time.time()
 
-    for sample in samples:
-        # TODO: Implement actual L2 gauntlet
-        # For now, trust L1
-        results_map[sample["id"]]["l2_prediction"] = sample.get("l1_prediction", sample["l0_prediction"])
-        results_map[sample["id"]]["l2_policies_violated"] = []
+    for i, sample in enumerate(samples):
+        # Direct classification prompt (no CoT - CoT hurts large models)
+        prompt = f'Classify the following text as either "harmful" or "safe". Respond with only one word.\n\nText: "{sample["text"]}"\n\nClassification:'
+
+        try:
+            response = requests.post(
+                OLLAMA_URL,
+                json={
+                    "model": L2_MODEL,
+                    "prompt": prompt,
+                    "stream": False,
+                    "options": {
+                        "temperature": 0,
+                        "num_predict": 10,  # Only need one word
+                    }
+                },
+                timeout=60
+            )
+
+            if response.status_code == 200:
+                result = response.json()
+                answer = result.get("response", "").strip().lower()
+
+                # Parse response
+                if "harmful" in answer:
+                    predicted = "harmful"
+                elif "safe" in answer:
+                    predicted = "safe"
+                else:
+                    # Fallback to L1
+                    predicted = sample.get("l1_prediction", sample["l0_prediction"])
+
+                results_map[sample["id"]]["l2_prediction"] = predicted
+                results_map[sample["id"]]["l2_raw_response"] = answer
+            else:
+                # Fallback to L1
+                results_map[sample["id"]]["l2_prediction"] = sample.get("l1_prediction", sample["l0_prediction"])
+                results_map[sample["id"]]["l2_error"] = f"HTTP {response.status_code}"
+
+        except Exception as e:
+            # Fallback to L1
+            results_map[sample["id"]]["l2_prediction"] = sample.get("l1_prediction", sample["l0_prediction"])
+            results_map[sample["id"]]["l2_error"] = str(e)
+
+        if (i + 1) % 5 == 0:
+            print(f"  Processed {i+1}/{len(samples)}")
+
+    elapsed = time.time() - start_time
+    print(f"\nL2 completed in {elapsed:.1f}s ({len(samples)/elapsed:.2f} samples/sec)")
 
     final_results = list(results_map.values())
 
