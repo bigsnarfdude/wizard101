@@ -12,13 +12,13 @@ Usage:
     python eval_layered_batch.py --layer l0 --benchmark all
 
     # Step 2: Run L1 on L0 uncertain samples
-    python eval_layered_batch.py --layer l1 --input cascade_evaluations/l0_results.json
+    python eval_layered_batch.py --layer l1 --input outputs/l0_results.json
 
     # Step 3: Run L2 on L1 uncertain samples
-    python eval_layered_batch.py --layer l2 --input cascade_evaluations/l1_results.json
+    python eval_layered_batch.py --layer l2 --input outputs/l1_results.json
 
     # Step 4: Combine and score
-    python eval_layered_batch.py --combine --output cascade_evaluations/final_scores.json
+    python eval_layered_batch.py --combine --output outputs/final_scores.json
 """
 
 import argparse
