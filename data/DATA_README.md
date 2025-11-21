@@ -35,7 +35,7 @@ experiments/guardreasoner/guardreasoner_data/  # Large training datasets (>100MB
 ## Training Datasets
 
 ### `all_combined.json` (127,544 samples, 357 MB)
-**Primary training dataset** - Combined from all sources with 3-task reasoning format.
+**L0 BOUNCER TRAINING DATASET** - This is what we trained the L0 classifier on. Combined from all sources with 3-task reasoning format.
 
 Format:
 ```json
@@ -63,7 +63,7 @@ Aegis safety framework dataset with reasoning traces.
 ToxicChat toxicity detection dataset with reasoning traces.
 
 ### `train_12k.json` (12,000 samples, 5.7 MB)
-Curated cascade training set - balanced harmful/safe samples.
+Earlier experiment - smaller training set (superseded by all_combined.json).
 
 Format:
 ```json
@@ -74,10 +74,10 @@ Format:
 ```
 
 ### `mega_train.json` (2,540 samples, 1 MB)
-Extended training samples for cascade model.
+Earlier experiment - extended samples (superseded by all_combined.json).
 
 ### `combined_train.json` (800 samples)
-Simple combined dataset from harmless_alpaca + harmful_behaviors.
+Earlier experiment - simple combined dataset (superseded by all_combined.json).
 
 ---
 
