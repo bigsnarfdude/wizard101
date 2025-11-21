@@ -8,44 +8,44 @@ A multi-tier AI safety guardrail system that combines speed, accuracy, and robus
 
 ---
 
-## Key Finding: L2 Options
+## Recommended Production Stack
 
-> **TL;DR: Use `gpt-oss:120b` with direct classification for L2. No Chain-of-Thought prompting.**
+> **TL;DR: DeBERTa → GuardReasoner-8B → gpt-oss-safeguard:20b with Harmony template**
 
-### Choose by Hardware
+### Results: 94.9% Accuracy, 96.6% F1
 
-| Option | Model | Accuracy | VRAM | Best For |
-|--------|-------|----------|------|----------|
-| **Best** | gpt-oss:120b direct | 86% | 65GB | Production |
-| **Good** | Gauntlet (6× 20b voting) | 71% | 13GB | Limited VRAM |
-| **Acceptable** | gpt-oss:20b + CoT | 71% | 13GB | Single model |
-| **Budget** | gpt-oss-safeguard | 57% | 13GB | Speed priority |
+| Layer | Model | Speed | VRAM | Accuracy |
+|-------|-------|-------|------|----------|
+| **L0** | DeBERTa-v3-xsmall | 2ms | <1GB | 95.2% (when confident) |
+| **L1** | GuardReasoner-8B (4-bit) | 8s | 5GB | 88.5% (+29.5% value) |
+| **L2** | gpt-oss-safeguard:20b | 0.18s | 13GB | 87.5% |
 
-### Benchmark Results (7 Edge Cases)
+### Key Findings
 
-| Model | Size | Baseline | With CoT | Notes |
-|-------|------|----------|----------|-------|
-| gpt-oss:20b | 20B | 57% | 71% | CoT helps |
-| gpt-oss-safeguard | 20B | 57% | 71% | Policy training didn't help |
-| **gpt-oss:120b** | **120B** | **86%** | 71% | CoT hurts (overthinking) |
+1. **Harmony template critical** - gpt-oss models need `<|start|>user<|message|>...<|end|>` format
+2. **Safeguard 20b = 120b accuracy** - Same 87.5% at 6.7x faster, 5x less VRAM
+3. **0.9 threshold optimal** - Sends 5.8% to L1, catches 31 vs 39 dangerous FN
+4. **512 tokens sufficient** - 4x faster L1 with same accuracy
+5. **L1 adds +29.5% value** - Critical layer for correcting L0 mistakes
 
-### Critical Insights
-
-1. **Scale matters** - 120b gets 86% vs 57% for 20b models
-2. **CoT hurts large models** - Makes 120b "overthink" (86% → 71%)
-3. **CoT helps small models** - Improves 20b from 57% → 71%
-4. **Safety policy training didn't help** - gpt-oss-safeguard = gpt-oss:20b
-
-### Deployment
+### Quick Deploy
 
 ```python
-# Simple, fast, accurate
-response = ollama.generate(
-    model="gpt-oss:120b",
-    prompt='Classify as safe or harmful: "your text here"'
-)
-# Returns: harmful or safe (86% accuracy on edge cases)
+# L2 with Harmony template
+prompt = f'''<|start|>user<|message|>Classify this text as either "harmful" or "safe". Respond with only one word.
+
+Text: "{text}"<|end|>
+<|start|>assistant<|channel|>final<|message|>'''
+
+response = ollama.generate(model="gpt-oss-safeguard:latest", prompt=prompt)
 ```
+
+### Resource Comparison
+
+| Config | Accuracy | L2 Speed | Total VRAM |
+|--------|----------|----------|------------|
+| **Recommended** (safeguard 20b) | 94.9% | 0.18s | ~19GB |
+| Heavy (120b) | 94.9% | 1.2s | ~71GB |
 
 ---
 
@@ -56,12 +56,12 @@ response = ollama.generate(
 │                    SAFETY CASCADE                            │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│   Input  ──►  L0 Bouncer  ──►  L1 Analyst  ──►  L2 Gauntlet │
-│               (2ms)           (200ms)          (2s)          │
-│               DeBERTa         Llama 3.2 3B     6-Expert      │
-│               124K trained    LoRA R-SFT       Voting        │
+│   Input  ──►  L0 Bouncer  ──►  L1 Analyst  ──►  L2 Classifier│
+│               (2ms)           (8s)             (0.18s)       │
+│               DeBERTa         GuardReasoner    gpt-oss-      │
+│               124K trained    8B 4-bit         safeguard     │
 │                                                              │
-│   Routing: High confidence stops, uncertain escalates        │
+│   Routing: confidence < 0.9 escalates, disagreement → L2    │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -70,10 +70,9 @@ response = ollama.generate(
 
 | Layer | Model | Speed | Purpose | Catches |
 |-------|-------|-------|---------|---------|
-| **L0 Bouncer** | DeBERTa-v3-xsmall | 2ms | Fast filter | 70-80% |
-| **L1 Analyst** | GuardReasoner-8B | 8s | Reasoning | 15-20% |
-| **L2 Classifier** | gpt-oss:120b | 500ms | Direct classification | 5-10% |
-| **L3 Judge** | Claude/GPT-4 | 5s | Final authority | <1% |
+| **L0 Bouncer** | DeBERTa-v3-xsmall | 2ms | Fast filter | 94.2% |
+| **L1 Analyst** | GuardReasoner-8B (4-bit) | 8s | Reasoning | 5.8% |
+| **L2 Classifier** | gpt-oss-safeguard:20b | 0.18s | Tiebreaker | 2.3% |
 
 ---
 
