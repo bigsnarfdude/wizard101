@@ -406,13 +406,121 @@ def combine_and_score(input_path: Path, output_path: Path):
         "l0_only": len(results) - l1_used,
         "l1_used": l1_used,
         "l2_used": l2_used,
-        "efficiency": (len(results) - l1_used) / len(results) if results else 0,  # % handled by L0 alone
+        "efficiency": (len(results) - l1_used) / len(results) if results else 0,
+    }
+
+    # === LAYER EFFECTIVENESS ===
+
+    # L0 Effectiveness
+    l0_confident = [r for r in results if not r.get("needs_l1", False)]
+    l0_confident_correct = sum(1 for r in l0_confident if r["l0_prediction"] == r["ground_truth"])
+    l0_confident_wrong = len(l0_confident) - l0_confident_correct
+
+    # False confidence: L0 was confident but WRONG
+    false_confidence_samples = [r for r in l0_confident if r["l0_prediction"] != r["ground_truth"]]
+
+    # Overconfidence by type
+    l0_overconfident_harmful = [r for r in false_confidence_samples if r["l0_prediction"] == "harmful" and r["ground_truth"] == "safe"]
+    l0_overconfident_safe = [r for r in false_confidence_samples if r["l0_prediction"] == "safe" and r["ground_truth"] == "harmful"]
+
+    metrics["l0_effectiveness"] = {
+        "coverage": len(l0_confident) / len(results) if results else 0,
+        "accuracy_when_confident": l0_confident_correct / len(l0_confident) if l0_confident else 0,
+        "false_confidence_rate": l0_confident_wrong / len(l0_confident) if l0_confident else 0,
+        "false_confidence_count": l0_confident_wrong,
+        "overconfident_harmful": len(l0_overconfident_harmful),  # Said harmful, was safe (false positive)
+        "overconfident_safe": len(l0_overconfident_safe),        # Said safe, was harmful (false negative - DANGEROUS)
+        "escalation_rate": l1_used / len(results) if results else 0,
+    }
+
+    # L1 Effectiveness
+    l1_samples = [r for r in results if "l1_prediction" in r]
+    if l1_samples:
+        l1_corrected_l0 = sum(1 for r in l1_samples if r["l1_prediction"] != r["l0_prediction"] and r["l1_prediction"] == r["ground_truth"])
+        l1_agreed_l0 = sum(1 for r in l1_samples if r["l1_prediction"] == r["l0_prediction"])
+        l1_correct = sum(1 for r in l1_samples if r["l1_prediction"] == r["ground_truth"])
+        l0_was_correct = sum(1 for r in l1_samples if r["l0_prediction"] == r["ground_truth"])
+
+        # L1 made it worse
+        l1_broke_l0 = sum(1 for r in l1_samples if r["l0_prediction"] == r["ground_truth"] and r["l1_prediction"] != r["ground_truth"])
+
+        metrics["l1_effectiveness"] = {
+            "samples_received": len(l1_samples),
+            "correction_rate": l1_corrected_l0 / len(l1_samples) if l1_samples else 0,
+            "corrections_made": l1_corrected_l0,
+            "agreement_rate": l1_agreed_l0 / len(l1_samples) if l1_samples else 0,
+            "accuracy": l1_correct / len(l1_samples) if l1_samples else 0,
+            "value_added": (l1_correct - l0_was_correct) / len(l1_samples) if l1_samples else 0,
+            "made_worse": l1_broke_l0,  # L0 was right, L1 changed to wrong
+            "escalation_rate": l2_used / len(l1_samples) if l1_samples else 0,
+        }
+    else:
+        metrics["l1_effectiveness"] = {"samples_received": 0}
+
+    # L2 Effectiveness
+    l2_samples = [r for r in results if "l2_prediction" in r]
+    if l2_samples:
+        l2_correct = sum(1 for r in l2_samples if r["l2_prediction"] == r["ground_truth"])
+
+        metrics["l2_effectiveness"] = {
+            "samples_received": len(l2_samples),
+            "accuracy": l2_correct / len(l2_samples) if l2_samples else 0,
+        }
+    else:
+        metrics["l2_effectiveness"] = {"samples_received": 0}
+
+    # === BLINDSPOTS & PROBLEM SAMPLES ===
+
+    # Collect problem samples for analysis
+    blindspots = {
+        "false_confidence_harmful": [],  # L0 confident harmful, actually safe (over-blocking)
+        "false_confidence_safe": [],     # L0 confident safe, actually harmful (DANGEROUS)
+        "l1_made_worse": [],             # L1 changed correct L0 to wrong
+        "all_layers_wrong": [],          # Every layer got it wrong
+    }
+
+    for r in results:
+        sample_summary = {
+            "id": r["id"],
+            "benchmark": r["benchmark"],
+            "text": r["text"][:200] + "..." if len(r["text"]) > 200 else r["text"],
+            "ground_truth": r["ground_truth"],
+            "l0_prediction": r["l0_prediction"],
+            "l0_confidence": r.get("l0_confidence", 0),
+        }
+
+        # False confidence - L0 was confident but wrong
+        if not r.get("needs_l1", False) and r["l0_prediction"] != r["ground_truth"]:
+            if r["l0_prediction"] == "harmful":
+                blindspots["false_confidence_harmful"].append(sample_summary)
+            else:
+                blindspots["false_confidence_safe"].append(sample_summary)
+
+        # L1 made it worse
+        if "l1_prediction" in r:
+            if r["l0_prediction"] == r["ground_truth"] and r["l1_prediction"] != r["ground_truth"]:
+                sample_summary["l1_prediction"] = r["l1_prediction"]
+                blindspots["l1_made_worse"].append(sample_summary)
+
+        # All layers wrong
+        if not r["correct"]:
+            final_layer = "l2" if "l2_prediction" in r else "l1" if "l1_prediction" in r else "l0"
+            sample_summary["trapped_at"] = final_layer
+            sample_summary["final_prediction"] = r["final_prediction"]
+            blindspots["all_layers_wrong"].append(sample_summary)
+
+    metrics["blindspots"] = {
+        "false_confidence_harmful_count": len(blindspots["false_confidence_harmful"]),
+        "false_confidence_safe_count": len(blindspots["false_confidence_safe"]),
+        "l1_made_worse_count": len(blindspots["l1_made_worse"]),
+        "all_layers_wrong_count": len(blindspots["all_layers_wrong"]),
     }
 
     # Save
     output = {
         "timestamp": datetime.now().isoformat(),
         "metrics": metrics,
+        "blindspots": blindspots,
         "results": results,
     }
 
@@ -434,12 +542,69 @@ def combine_and_score(input_path: Path, output_path: Path):
         print(f"  {bench}:")
         print(f"    Accuracy: {m['accuracy']*100:.1f}%  F1: {m['f1']*100:.1f}%")
 
+    print(f"\n{'='*60}")
+    print("LAYER EFFECTIVENESS")
+    print(f"{'='*60}")
+
+    l0 = metrics["l0_effectiveness"]
+    print(f"\nL0 Bouncer:")
+    print(f"  Coverage: {l0['coverage']*100:.1f}% (handled without escalation)")
+    print(f"  Accuracy when confident: {l0['accuracy_when_confident']*100:.1f}%")
+    print(f"  False confidence rate: {l0['false_confidence_rate']*100:.1f}% ({l0['false_confidence_count']} samples)")
+    print(f"    - Overconfident harmful (FP): {l0['overconfident_harmful']}")
+    print(f"    - Overconfident safe (FN): {l0['overconfident_safe']} ⚠️  DANGEROUS")
+    print(f"  Escalation rate: {l0['escalation_rate']*100:.1f}%")
+
+    l1 = metrics["l1_effectiveness"]
+    if l1["samples_received"] > 0:
+        print(f"\nL1 Analyst:")
+        print(f"  Samples received: {l1['samples_received']}")
+        print(f"  Correction rate: {l1['correction_rate']*100:.1f}% ({l1['corrections_made']} fixed)")
+        print(f"  Agreement rate: {l1['agreement_rate']*100:.1f}%")
+        print(f"  Accuracy: {l1['accuracy']*100:.1f}%")
+        print(f"  Value added: {l1['value_added']*100:+.1f}%")
+        if l1['made_worse'] > 0:
+            print(f"  Made worse: {l1['made_worse']} ⚠️")
+        print(f"  Escalation rate: {l1['escalation_rate']*100:.1f}%")
+
+    l2 = metrics["l2_effectiveness"]
+    if l2["samples_received"] > 0:
+        print(f"\nL2 Gauntlet:")
+        print(f"  Samples received: {l2['samples_received']}")
+        print(f"  Accuracy: {l2['accuracy']*100:.1f}%")
+
+    print(f"\n{'='*60}")
+    print("BLINDSPOTS & PROBLEM AREAS")
+    print(f"{'='*60}")
+
+    bs = metrics["blindspots"]
+    print(f"\n  False confidence (harmful→safe): {bs['false_confidence_harmful_count']} (over-blocking)")
+    print(f"  False confidence (safe→harmful): {bs['false_confidence_safe_count']} ⚠️  DANGEROUS")
+    print(f"  L1 made worse: {bs['l1_made_worse_count']}")
+    print(f"  All layers wrong: {bs['all_layers_wrong_count']}")
+
+    # Show some examples of dangerous blindspots
+    if blindspots["false_confidence_safe"]:
+        print(f"\n  ⚠️  DANGEROUS: L0 confidently said SAFE but was HARMFUL:")
+        for sample in blindspots["false_confidence_safe"][:3]:
+            print(f"    - [{sample['benchmark']}] conf={sample['l0_confidence']:.2f}")
+            print(f"      \"{sample['text'][:100]}...\"")
+
+    if blindspots["all_layers_wrong"]:
+        print(f"\n  All layers failed on:")
+        for sample in blindspots["all_layers_wrong"][:3]:
+            print(f"    - [{sample['benchmark']}] trapped at {sample['trapped_at']}")
+            print(f"      truth={sample['ground_truth']}, pred={sample['final_prediction']}")
+            print(f"      \"{sample['text'][:100]}...\"")
+
     print(f"\nCascade Efficiency:")
     print(f"  L0 only: {metrics['cascade']['l0_only']} ({metrics['cascade']['efficiency']*100:.1f}%)")
     print(f"  L1 used: {metrics['cascade']['l1_used']}")
     print(f"  L2 used: {metrics['cascade']['l2_used']}")
 
     print(f"\nResults saved to: {output_path}")
+    print(f"  - Full results: {output_path}")
+    print(f"  - Blindspot samples in 'blindspots' key for analysis")
 
     return output
 
