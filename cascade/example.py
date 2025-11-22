@@ -149,7 +149,7 @@ def main():
     print("\n" + "=" * 60)
     print("To run full cascade example:")
     print("  1. Start Ollama: ollama serve")
-    print("  2. Pull model: ollama pull gpt-oss:20b")
+    print("  2. Pull model: ollama pull gpt-oss-safeguard:latest")
     print("  3. Run: python example.py --full")
     print("=" * 60)
 
@@ -159,7 +159,7 @@ def main():
             example_full_cascade()
         except Exception as e:
             print(f"\nFull cascade failed: {e}")
-            print("Make sure Ollama is running with gpt-oss:20b")
+            print("Make sure Ollama is running with gpt-oss-safeguard:latest")
 
 
 if __name__ == "__main__":

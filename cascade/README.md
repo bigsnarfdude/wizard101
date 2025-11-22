@@ -1,6 +1,6 @@
 # Safety Cascade
 
-**Cascata Fiduciae Fundata** (Cascade of Founded Trust)
+> *Cascata Fiduciae Fundata* (Cascade of Founded Trust)
 
 A multi-tier content safety classification system that balances speed, accuracy, and resource usage through intelligent routing.
 
@@ -88,14 +88,25 @@ Input → L0 Bouncer (6ms, 22M params)
                                                               └─ Final verdict
 ```
 
-### Tier Details
+### Meet the Safety Team
 
-| Tier | Model | Size | Latency | Purpose |
-|------|-------|------|---------|---------|
-| **L0 Bouncer** | DeBERTa-v3-xsmall | 22M | ~6ms | Fast binary filter |
-| **L1 Analyst** | GuardReasoner-8B | 8B | ~100ms | Reasoning-based analysis |
-| **L2 Gauntlet** | gpt-oss-safeguard × 6 | 20B | ~200ms | Multi-expert voting |
-| **L3 Judge** | gpt-oss-safeguard:120b | 120B | ~2s | Final authority |
+The system is designed as a hierarchy of specialized agents, each with a distinct role:
+
+| Agent | Role | Model | Latency | Description |
+|-------|------|-------|---------|-------------|
+| **L0 Bouncer** | **The Gatekeeper** | DeBERTa-v3-xsmall | ~6ms | Fast, efficient, and decisive. Handles 70% of traffic. If it sees something clearly safe or clearly harmful, it acts immediately. If it has any doubt, it escalates. |
+| **L1 Analyst** | **The Thinker** | GuardReasoner-8B | ~100ms | Uses chain-of-thought reasoning to analyze context. Good at catching nuance that the Bouncer misses. |
+| **L2 Gauntlet** | **The Committee** | gpt-oss-safeguard × 6 | ~200ms | A panel of 6 specialized experts (Hate Speech, Violence, Sexual, Self-Harm, Privacy, Illegal) who vote on the content. Requires consensus to pass. |
+| **L3 Judge** | **The Authority** | gpt-oss-safeguard:120b | ~2s | A massive model that reviews the entire case file (including previous verdicts) to make a final, definitive ruling and generate an audit trail. |
+
+#### L2 Gauntlet Experts
+The L2 layer runs these specialized personas in parallel:
+1. **Hate Speech Expert**
+2. **Violence Expert**
+3. **Sexual Content Expert**
+4. **Self-Harm Expert**
+5. **Privacy Expert**
+6. **Illegal Activity Expert**
 
 ## Performance
 
