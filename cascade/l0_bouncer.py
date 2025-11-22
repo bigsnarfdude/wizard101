@@ -21,7 +21,7 @@ class L0Bouncer:
         import os
         if not os.path.exists(model_path):
             print(f"Local model not found at {model_path}. Using HuggingFace repo.")
-            model_path = "vincentoh/deberta-v3-xsmall-l0-bouncer-full"
+            model_path = "vincentoh/wizard101-l0-bouncer"
 
         print(f"Loading L0 Bouncer from {model_path}...")
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)

@@ -157,7 +157,7 @@ Models are available on HuggingFace:
 
 | Model | Samples | F1 | HuggingFace |
 |-------|---------|----|----|
-| **l0-bouncer-full** (recommended) | 124K | 95.2% | [vincentoh/deberta-v3-xsmall-l0-bouncer-full](https://huggingface.co/vincentoh/deberta-v3-xsmall-l0-bouncer-full) |
+| **l0-bouncer-full** (recommended) | 124K | 95.2% | [vincentoh/wizard101-l0-bouncer](https://huggingface.co/vincentoh/wizard101-l0-bouncer) |
 | l0-bouncer-12k | 12K | 93% | [vincentoh/deberta-v3-xsmall-l0-bouncer](https://huggingface.co/vincentoh/deberta-v3-xsmall-l0-bouncer) |
 | l0-bouncer-mega | 2.5K | 85.6% | [vincentoh/deberta-v3-xsmall-l0-bouncer-mega](https://huggingface.co/vincentoh/deberta-v3-xsmall-l0-bouncer-mega) |
 

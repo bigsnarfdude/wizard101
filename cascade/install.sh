@@ -60,7 +60,7 @@ echo "Downloading L0 Bouncer (DeBERTa, ~90MB)..."
 python3 -c "
 from huggingface_hub import snapshot_download
 snapshot_download(
-    repo_id='vincentoh/deberta-v3-xsmall-l0-bouncer-full',
+    repo_id='vincentoh/wizard101-l0-bouncer',
     local_dir='./models/l0_bouncer',
     local_dir_use_symlinks=False
 )

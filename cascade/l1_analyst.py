@@ -14,15 +14,20 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 class L1Analyst:
     """Reasoning-based safety analyst using GuardReasoner-8B."""
 
-    def __init__(self, model_id="yueliu1999/GuardReasoner-8B"):
+    def __init__(self, model_id="vincentoh/guardreasoner-8b-gguf"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         print(f"Loading L1 Analyst (GuardReasoner-8B)...")
         print(f"  Model: {model_id}")
 
-        # Quantization config for memory efficiency (8B needs ~16GB, 4bit needs ~4GB)
-        # Only use 4-bit if CUDA is available (bitsandbytes requirement)
-        if torch.cuda.is_available():
+        # Determine quantization strategy
+        quantization_config = None
+        
+        if "gguf" in model_id.lower():
+            print("  Detected GGUF model - skipping bitsandbytes quantization")
+            # GGUF is already quantized. Transformers will handle it if version supports it.
+        elif torch.cuda.is_available():
+            # Use bitsandbytes 4-bit for standard models on CUDA
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
@@ -32,21 +37,42 @@ class L1Analyst:
             quantization_config = bnb_config
             print("  Using 4-bit quantization (CUDA)")
         else:
-            quantization_config = None
             print("  Using full precision (CPU/MPS) - Warning: High RAM usage")
 
         # Load tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
+        tokenizer_id = model_id
+        if "gguf" in model_id.lower():
+            tokenizer_id = "yueliu1999/GuardReasoner-8B"
+            print(f"  Loading tokenizer from {tokenizer_id} for GGUF...")
+
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_id)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
         # Load model
+        load_kwargs = {
+            "quantization_config": quantization_config,
+            "device_map": "auto",
+            "torch_dtype": torch.float16,
+            "trust_remote_code": True,
+        }
+
+        if "gguf" in model_id.lower():
+            # Specify the exact GGUF filename provided by user
+            load_kwargs["gguf_file"] = "guardreasoner-8b-q4_k_m.gguf"
+            
+            # GGUF repo might lack config.json, so load config from the original model
+            try:
+                from transformers import AutoConfig
+                print("  Loading config from yueliu1999/GuardReasoner-8B for GGUF...")
+                config = AutoConfig.from_pretrained("yueliu1999/GuardReasoner-8B")
+                load_kwargs["config"] = config
+            except Exception as e:
+                print(f"  Warning: Could not load fallback config: {e}")
+
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            quantization_config=quantization_config,
-            device_map="auto",
-            torch_dtype=torch.float16,
-            trust_remote_code=True,
+            **load_kwargs
         )
         self.model.eval()
 
