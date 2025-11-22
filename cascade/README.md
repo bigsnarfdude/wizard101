@@ -163,9 +163,29 @@ Models are available on HuggingFace:
 
 ### L1 Analyst
 
-- Model: [yueliu1999/GuardReasoner-8B](https://huggingface.co/yueliu1999/GuardReasoner-8B)
+| Model | Format | Size | HuggingFace |
+|-------|--------|------|-------------|
+| **GuardReasoner-8B GGUF** (recommended) | Q4_K_M | 4.6GB | [vincentoh/guardreasoner-8b-gguf](https://huggingface.co/vincentoh/guardreasoner-8b-gguf) |
+| GuardReasoner-8B (original) | Safetensors | 16GB | [yueliu1999/GuardReasoner-8B](https://huggingface.co/yueliu1999/GuardReasoner-8B) |
+
 - Paper: "GuardReasoner: Towards Reasoning-based LLM Safeguards" (arXiv:2501.18492)
 - Expected F1: ~84% on safety benchmarks
+
+#### Using the GGUF with Ollama
+
+```bash
+# Download the GGUF
+wget https://huggingface.co/vincentoh/guardreasoner-8b-gguf/resolve/main/guardreasoner-8b-q4_k_m.gguf
+
+# Create Modelfile
+echo 'FROM ./guardreasoner-8b-q4_k_m.gguf' > Modelfile
+
+# Import to Ollama
+ollama create guardreasoner-8b -f Modelfile
+
+# Test
+ollama run guardreasoner-8b
+```
 
 ## Ollama Setup
 
