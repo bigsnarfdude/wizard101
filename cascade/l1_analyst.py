@@ -21,12 +21,19 @@ class L1Analyst:
         print(f"  Model: {model_id}")
 
         # Quantization config for memory efficiency (8B needs ~16GB, 4bit needs ~4GB)
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=True,
-        )
+        # Only use 4-bit if CUDA is available (bitsandbytes requirement)
+        if torch.cuda.is_available():
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
+            )
+            quantization_config = bnb_config
+            print("  Using 4-bit quantization (CUDA)")
+        else:
+            quantization_config = None
+            print("  Using full precision (CPU/MPS) - Warning: High RAM usage")
 
         # Load tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -36,7 +43,7 @@ class L1Analyst:
         # Load model
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            quantization_config=bnb_config,
+            quantization_config=quantization_config,
             device_map="auto",
             torch_dtype=torch.float16,
             trust_remote_code=True,
@@ -60,7 +67,7 @@ End your analysis with exactly: "Request: harmful" or "Request: unharmful"."""
         # Use Llama-3 instruct format (GuardReasoner-8B is based on Llama-3-8B-Instruct)
         return f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
-{system}<|eot_id|><|start_header_id|>user<|end_header_id|}
+{system}<|eot_id|><|start_header_id|>user<|end_header_id|>
 
 {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
