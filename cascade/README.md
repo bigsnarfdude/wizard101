@@ -110,7 +110,7 @@ The L2 layer runs these specialized personas in parallel:
 
 ## Performance
 
-### L0 Bouncer (Production Model)
+### L0 Bouncer
 
 | Metric | Value |
 |--------|-------|
