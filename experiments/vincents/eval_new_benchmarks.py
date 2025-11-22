@@ -43,7 +43,7 @@ def load_benchmark(name: str, max_samples: int = None):
     if not path or not path.exists():
         raise ValueError(f"Benchmark not found: {name}")
 
-    with open(path) as f:
+    with open(path, encoding='utf-8') as f:
         data = json.load(f)
 
     if max_samples and len(data) > max_samples:
