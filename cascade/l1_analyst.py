@@ -8,71 +8,29 @@ Expected performance: ~84% F1 on safety benchmarks
 """
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 class L1Analyst:
     """Reasoning-based safety analyst using GuardReasoner-8B."""
 
-    def __init__(self, model_id="vincentoh/guardreasoner-8b-gguf"):
+    def __init__(self, model_id="vincentoh/guardreasoner-8b-4bit"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         print(f"Loading L1 Analyst (GuardReasoner-8B)...")
         print(f"  Model: {model_id}")
 
-        # Determine quantization strategy
-        quantization_config = None
-        
-        if "gguf" in model_id.lower():
-            print("  Detected GGUF model - skipping bitsandbytes quantization")
-            # GGUF is already quantized. Transformers will handle it if version supports it.
-        elif torch.cuda.is_available():
-            # Use bitsandbytes 4-bit for standard models on CUDA
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_use_double_quant=True,
-            )
-            quantization_config = bnb_config
-            print("  Using 4-bit quantization (CUDA)")
-        else:
-            print("  Using full precision (CPU/MPS) - Warning: High RAM usage")
-
         # Load tokenizer
-        tokenizer_id = model_id
-        if "gguf" in model_id.lower():
-            tokenizer_id = "yueliu1999/GuardReasoner-8B"
-            print(f"  Loading tokenizer from {tokenizer_id} for GGUF...")
-
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_id)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
-        # Load model
-        load_kwargs = {
-            "quantization_config": quantization_config,
-            "device_map": "auto",
-            "torch_dtype": torch.float16,
-            "trust_remote_code": True,
-        }
-
-        if "gguf" in model_id.lower():
-            # Specify the exact GGUF filename provided by user
-            load_kwargs["gguf_file"] = "guardreasoner-8b-q4_k_m.gguf"
-            
-            # GGUF repo might lack config.json, so load config from the original model
-            try:
-                from transformers import AutoConfig
-                print("  Loading config from yueliu1999/GuardReasoner-8B for GGUF...")
-                config = AutoConfig.from_pretrained("yueliu1999/GuardReasoner-8B")
-                load_kwargs["config"] = config
-            except Exception as e:
-                print(f"  Warning: Could not load fallback config: {e}")
-
+        # Load model - the 4-bit quantization is baked into the model
+        print("  Loading pre-quantized 4-bit model...")
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            **load_kwargs
+            device_map="auto",
+            trust_remote_code=True,
         )
         self.model.eval()
 
@@ -139,7 +97,7 @@ End your analysis with exactly: "Request: harmful" or "Request: unharmful"."""
         if "request: harmful" in response_lower:
             label = "harmful"
             confidence = 0.9
-        elif "request: unharmful" in response_lower:
+        elif "request: unharmful" in response_lower or "the request is unharmful" in response_lower:
             label = "safe"
             confidence = 0.9
         elif "request: benign" in response_lower:
@@ -152,7 +110,7 @@ End your analysis with exactly: "Request: harmful" or "Request: unharmful"."""
         elif "therefore, the content is safe" in response_lower:
             label = "safe"
             confidence = 0.85
-        elif "this is harmful" in response_lower:
+        elif "this is harmful" in response_lower or "the request is harmful" in response_lower:
             label = "harmful"
             confidence = 0.85
         elif "this is safe" in response_lower or "this is unharmful" in response_lower:

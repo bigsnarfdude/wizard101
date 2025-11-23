@@ -165,27 +165,12 @@ Models are available on HuggingFace:
 
 | Model | Format | Size | HuggingFace |
 |-------|--------|------|-------------|
-| **GuardReasoner-8B GGUF** (recommended) | Q4_K_M | 4.6GB | [vincentoh/guardreasoner-8b-gguf](https://huggingface.co/vincentoh/guardreasoner-8b-gguf) |
+| **GuardReasoner-8B 4-bit** (recommended) | Safetensors | 5.4GB | [vincentoh/guardreasoner-8b-4bit](https://huggingface.co/vincentoh/guardreasoner-8b-4bit) |
 | GuardReasoner-8B (original) | Safetensors | 16GB | [yueliu1999/GuardReasoner-8B](https://huggingface.co/yueliu1999/GuardReasoner-8B) |
 
 - Paper: "GuardReasoner: Towards Reasoning-based LLM Safeguards" (arXiv:2501.18492)
 - Expected F1: ~84% on safety benchmarks
-
-#### Using the GGUF with Ollama
-
-```bash
-# Download the GGUF
-wget https://huggingface.co/vincentoh/guardreasoner-8b-gguf/resolve/main/guardreasoner-8b-q4_k_m.gguf
-
-# Create Modelfile
-echo 'FROM ./guardreasoner-8b-q4_k_m.gguf' > Modelfile
-
-# Import to Ollama
-ollama create guardreasoner-8b -f Modelfile
-
-# Test
-ollama run guardreasoner-8b
-```
+- Pre-quantized with bitsandbytes NF4 for efficient CUDA inference
 
 ## Ollama Setup
 
@@ -243,7 +228,7 @@ l0 = L0Bouncer(model_path="./models/l0_bouncer")
 result = l0.classify("text")  # Returns dict with label, confidence, probs
 
 # L1: Reasoning analyst
-l1 = L1Analyst(model_id="yueliu1999/GuardReasoner-8B")
+l1 = L1Analyst(model_id="vincentoh/guardreasoner-8b-4bit")
 result = l1.analyze("text")  # Returns dict with label, reasoning, confidence
 
 # L2: Expert voting
