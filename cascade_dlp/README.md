@@ -1,6 +1,8 @@
-# Cascade DLP
+# Cascade DLP (Project Emmentaler)
 
 > Data Loss Prevention for LLM outputs - detecting sensitive data exfiltration in model responses.
+>
+> *Finding the holes in your data protection.*
 
 ## Overview
 
