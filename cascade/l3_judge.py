@@ -3,7 +3,7 @@
 L3 Judge - Final Authority
 
 Large language model for final arbitration on edge cases.
-Uses gpt-oss-safeguard:120b for highest accuracy.
+Uses gpt-oss:120b for highest accuracy.
 Creates audit trail and training signal.
 """
 
@@ -14,7 +14,7 @@ from pathlib import Path
 
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL = "gpt-oss-safeguard:120b"  # Safeguard-trained model for final decisions
+MODEL = "gpt-oss:120b"  # Large model for final decisions
 
 
 class L3Judge:

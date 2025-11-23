@@ -14,14 +14,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 class L0Bouncer:
     """Fast safety classifier using DeBERTa-v3-xsmall."""
 
-    def __init__(self, model_path="./models/l0_bouncer"):
+    def __init__(self, model_path="./models/l0_bouncer_12k"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        # Check if local path exists, otherwise use HF repo
-        import os
-        if not os.path.exists(model_path):
-            print(f"Local model not found at {model_path}. Using HuggingFace repo.")
-            model_path = "vincentoh/wizard101-l0-bouncer"
 
         print(f"Loading L0 Bouncer from {model_path}...")
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)

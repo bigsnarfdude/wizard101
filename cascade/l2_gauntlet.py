@@ -13,10 +13,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 # Model options for L2 experts:
-# - "gpt-oss-safeguard:latest" - OpenAI safeguard-trained model (recommended)
-# - "gpt-oss:20b"              - Base model without safeguard training
-# - "guardreasoner:8b"         - GuardReasoner 8B from HuggingFace (if loaded in Ollama)
-MODEL = "gpt-oss-safeguard:latest"
+# - "gpt-oss:20b"           - Safety-focused reasoning (Ollama)
+# - "guardreasoner:8b"      - GuardReasoner 8B from HuggingFace (if loaded in Ollama)
+# - "llama3.2:3b"           - Fast but less accurate
+MODEL = "gpt-oss:20b"
 
 
 # Expert persona definitions

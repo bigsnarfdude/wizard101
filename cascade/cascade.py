@@ -11,10 +11,10 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .l0_bouncer import L0Bouncer
-from .l1_analyst import L1Analyst
-from .l2_gauntlet import L2Gauntlet
-from .l3_judge import L3Judge
+from l0_bouncer import L0Bouncer
+from l1_analyst import L1Analyst
+from l2_gauntlet import L2Gauntlet
+from l3_judge import L3Judge
 
 
 @dataclass
@@ -49,10 +49,10 @@ class SafetyCascade:
     Multi-tier safety classification cascade.
 
     Flow:
-    1. L0 Bouncer (The Gatekeeper) - Fast binary filter
-    2. L1 Analyst (The Thinker) - Reasoning-based analysis
-    3. L2 Gauntlet (The Committee) - Multi-expert voting
-    4. L3 Judge (The Authority) - Final arbitration
+    1. L0 Bouncer (fast) - Pass confident safe
+    2. L1 Analyst (medium) - Reason through uncertain cases
+    3. L2 Gauntlet (slow) - Multi-expert voting for edge cases
+    4. L3 Judge (slowest) - Final authority
     """
 
     def __init__(self, config: CascadeConfig = None):

@@ -66,3 +66,4 @@ experiments/guardreasoner/mlx_models/*/model.safetensors
 # Large training datasets (>100MB) - not tracked in git
 experiments/guardreasoner/guardreasoner_data/*.json
 
+cascade/models/
