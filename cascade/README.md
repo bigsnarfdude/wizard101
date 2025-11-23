@@ -11,7 +11,7 @@ A multi-tier content safety classification system that balances speed, accuracy,
 | Tier | Minimum VRAM | Recommended VRAM | Notes |
 |------|--------------|------------------|-------|
 | L0 only | 4GB | 8GB | DeBERTa classifier |
-| L0 + L1 | **16GB** | 24GB | Adds GuardReasoner 8B |
+| L0 + L1 | **16GB** | 24GB | Adds GuardReasoner 8B 4bit |
 | Full cascade | **24GB** | 48GB | Includes L2/L3 with Ollama |
 
 ### Software
