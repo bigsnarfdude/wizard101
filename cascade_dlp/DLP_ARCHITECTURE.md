@@ -190,5 +190,134 @@ No one has published a purpose-built DLP model like LlamaGuard for safety.
 
 ---
 
+## Enterprise DLP Reference: Microsoft Purview
+
+Reference: https://learn.microsoft.com/en-us/purview/dlp-policy-design
+
+### Purview Policy Structure
+
+```
+┌─────────────────────────────────────────┐
+│           PURVIEW DLP POLICY            │
+├─────────────────────────────────────────┤
+│  1. Monitor    - What content types     │
+│  2. Scope      - Admin boundaries       │
+│  3. Location   - Where to monitor       │
+│  4. Conditions - Triggers (AND/OR/NOT)  │
+│  5. Actions    - Block/Alert/Audit      │
+└─────────────────────────────────────────┘
+```
+
+### Key Features
+
+| Purview Feature | Purpose |
+|-----------------|---------|
+| Confidence levels | Adjustable detection sensitivity |
+| Pre-built templates | HIPAA, PCI-DSS, GDPR compliance |
+| Boolean conditions | AND/OR/NOT rule logic |
+| Multiple actions | Block, alert, audit, override |
+| User override | Proceed with justification + audit |
+
+### Mapping to DLP-Guard
+
+| Purview | Our Implementation |
+|---------|-------------------|
+| Confidence levels | Presidio score threshold (≥0.7) |
+| Pre-built templates | Custom recognizers per compliance |
+| Actions | REDACT / ALLOW / ALERT / AUDIT |
+| User override | Future: allow with justification |
+| Boolean conditions | Score aggregation logic |
+
+### Features to Implement
+
+#### 1. Configurable Actions
+```python
+class DLPAction(Enum):
+    BLOCK = "block"      # Reject entirely
+    REDACT = "redact"    # Remove sensitive data
+    ALERT = "alert"      # Notify security team
+    AUDIT = "audit"      # Log only, allow through
+    OVERRIDE = "override" # User can proceed with justification
+```
+
+#### 2. Compliance Templates
+```python
+COMPLIANCE_TEMPLATES = {
+    "HIPAA": {
+        "entities": ["US_SSN", "MEDICAL_LICENSE", "PERSON", "DATE_TIME"],
+        "confidence": 0.8,
+        "action": "REDACT"
+    },
+    "PCI-DSS": {
+        "entities": ["CREDIT_CARD", "US_BANK_NUMBER"],
+        "confidence": 0.9,
+        "action": "BLOCK"
+    },
+    "GDPR": {
+        "entities": ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "LOCATION"],
+        "confidence": 0.7,
+        "action": "REDACT"
+    }
+}
+```
+
+#### 3. Policy as Code
+```yaml
+# dlp_policy.yaml
+policy:
+  name: "Production DLP"
+  version: "1.0"
+
+  rules:
+    - name: "Credit Card Detection"
+      entity: CREDIT_CARD
+      confidence: 0.8
+      action: REDACT
+      notify: security@company.com
+
+    - name: "Medical Records"
+      entities: [MEDICAL_LICENSE, US_SSN]
+      confidence: 0.7
+      action: ALERT
+      require_override_reason: true
+
+    - name: "PII Audit"
+      entities: [PERSON, EMAIL_ADDRESS]
+      confidence: 0.6
+      action: AUDIT
+```
+
+#### 4. Audit Logging
+```python
+@dataclass
+class DLPAuditEvent:
+    timestamp: datetime
+    policy_name: str
+    entity_type: str
+    confidence: float
+    action_taken: str
+    user_override: bool
+    override_reason: Optional[str]
+    content_hash: str  # For forensics without storing PII
+```
+
+### Enterprise Considerations
+
+1. **Compliance reporting** - Generate reports for auditors
+2. **Policy versioning** - Track policy changes over time
+3. **Testing mode** - Audit-only before enforcing
+4. **Incident response** - Integrate with SIEM/SOAR
+5. **User training** - Override requires acknowledgment
+
+### Why This Matters
+
+Purview represents enterprise-grade DLP. For DLP-Guard to be production-ready:
+- Must support compliance frameworks (HIPAA, PCI, GDPR)
+- Must have configurable actions beyond just block/allow
+- Must provide audit trail for compliance
+- Must allow policy-as-code for version control
+
+---
+
 *Session: 2024-11-23*
-*Status: L0 complete, L1 architecture decided, ready for implementation*
+*Status: L0 complete, L1 architecture decided, Purview features documented*
