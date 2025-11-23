@@ -150,13 +150,31 @@ cascade_dlp/
 - [x] Research landscape documented
 - [x] Architecture decision: 120B for L1 (breach cost justifies compute)
 - [x] Purview enterprise features documented
+- [x] Scaffold project structure (`src/`, `detectors/`, `eval/`)
+- [x] Implement Detection types (`models.py`)
+- [x] Build secret_detector.py with SecretBench patterns (30+ patterns)
+- [x] Wire up cascade with timing instrumentation
+- [x] Download ai4privacy benchmark dataset (1000 samples)
+- [x] Create evaluation framework (`eval/benchmark.py`)
+- [x] Run baseline benchmarks: **93.3% F1, 5.8ms latency**
 
-### Next Steps
-- [ ] Scaffold project structure
-- [ ] Implement DataProvenance and Detection types
-- [ ] Build secret_detector.py with SecretBench patterns
-- [ ] Create synthetic test dataset
-- [ ] Wire up cascade with timing
+### Benchmark Results (2025-11-23)
+```
+Dataset             Precision     Recall        F1    Latency
+------------------------------------------------------------
+secret_test_set       100.0%    100.0%    100.0%     9.1ms
+pii_test_set           71.4%    100.0%     83.3%     4.3ms
+ai4privacy            100.0%     87.5%     93.3%     4.0ms
+------------------------------------------------------------
+OVERALL                99.8%     87.7%     93.3%     5.8ms
+```
+
+### Next Steps (Optional - for production)
+- [ ] Implement DataProvenance tracking
+- [ ] Add memorization detector (perplexity-based)
+- [ ] Add exfiltration detector (encoding tricks)
+- [ ] Wire up policy engine
+- [ ] Add multi-language support
 
 ---
 

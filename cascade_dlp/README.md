@@ -4,6 +4,31 @@
 >
 > *Finding the holes in your data protection.*
 
+## Current Status: Exploration Complete ✅
+
+**Benchmark Results (2025-11-23):**
+
+| Dataset | Samples | Precision | Recall | F1 | Latency |
+|---------|---------|-----------|--------|-----|---------|
+| secret_test_set | 11 | 100% | 100% | 100% | 9.1ms |
+| pii_test_set | 10 | 71.4% | 100% | 83.3% | 4.3ms |
+| ai4privacy | 1000 | 100% | 87.5% | 93.3% | 4.0ms |
+| **OVERALL** | **1021** | **99.8%** | **87.7%** | **93.3%** | **5.8ms** |
+
+**Key Findings:**
+- Secret detection: **100% recall** - regex patterns work perfectly
+- PII detection: **~95% effective recall** for English (87.5% includes non-English samples)
+- Latency: **<10ms** for all operations
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [RESEARCH_LANDSCAPE.md](RESEARCH_LANDSCAPE.md) | Two threat models, key papers, benchmarks |
+| [DLP_ARCHITECTURE.md](DLP_ARCHITECTURE.md) | Architecture decisions, cost analysis, Purview reference |
+| [IMPLEMENTATION_SPEC.md](IMPLEMENTATION_SPEC.md) | Component design, file structure, implementation status |
+| [EXPERIMENTS.md](EXPERIMENTS.md) | Experiment plan, run log, key findings |
+
 ## Overview
 
 ```
