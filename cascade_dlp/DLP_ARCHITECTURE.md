@@ -319,5 +319,5 @@ Purview represents enterprise-grade DLP. For DLP-Guard to be production-ready:
 
 ---
 
-*Session: 2024-11-23*
+*Session: 2025-11-23*
 *Status: L0 complete, L1 architecture decided, Purview features documented*
