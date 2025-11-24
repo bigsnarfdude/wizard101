@@ -67,3 +67,4 @@ experiments/guardreasoner/mlx_models/*/model.safetensors
 experiments/guardreasoner/guardreasoner_data/*.json
 
 cascade/models/
+archive/
