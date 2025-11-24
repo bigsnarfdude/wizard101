@@ -620,10 +620,10 @@ wizard101/
 ## Citation
 
 ```bibtex
-@misc{wizard101-2024,
+@misc{wizard101-2025,
   author = {Vincent Oh},
-  title = {Wizard101: Complete AI Safety Cascade},
-  year = {2024},
+  title = {Wizard101: AI Safety Cascade},
+  year = {2025},
   publisher = {GitHub},
   url = {https://github.com/bigsnarfdude/wizard101}
 }
