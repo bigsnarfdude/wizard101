@@ -13,7 +13,7 @@ A comprehensive four-layer AI safety system that provides end-to-end protection 
 The Wizard101 safety cascade consists of four specialized protection layers:
 
 ```
-```
+
 ┌─────────────────────────────────────────────────────────┐
 │                    ONION SECURITY                       │
 ├─────────────────────────────────────────────────────────┤
@@ -51,7 +51,7 @@ The Wizard101 safety cascade consists of four specialized protection layers:
 │   └─────────┘                                           │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
-```
+
 
 ```
 
