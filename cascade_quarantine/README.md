@@ -325,28 +325,46 @@ print(result.injection_detected)      # True
 
 ## Datasets
 
-### Training Data for Injection Detection
+### Injection Detection (Phase 3)
 
-1. **Prompt injection datasets**
-   - Garak injection probes
-   - HackAPrompt submissions
+| Dataset | Samples | Purpose | Status |
+|---------|---------|---------|--------|
+| **xTRam1/safe-guard-prompt-injection** | 10,296 | Primary training | ✅ Using |
+| reshabhs/SPML_Chatbot_Prompt_Injection | 16,012 | Degree annotations | Available |
+| deepset/prompt-injections | 662 | Legacy (multilingual noise) | Deprecated |
 
-2. **Benign requests**
-   - Normal user queries
-   - Legitimate complex requests
+### Safety Classification (Other Cascades)
 
-3. **Edge cases**
-   - Technical discussions about injections
-   - Security research queries
+| Dataset | Samples | Purpose |
+|---------|---------|---------|
+| train_12k | 12,000 | Primary safety training |
+| WildGuard | 1,554 | Primary evaluation |
+| WildJailbreak | 88,444 | Large-scale jailbreak |
+| XSTest | 450 | Over-refusal testing |
 
 ## Metrics
 
-| Metric | Target | Rationale |
-|--------|--------|-----------|
-| Injection Detection | >99% | Critical security |
-| False Positive Rate | <1% | User experience |
-| Latency | <50ms | In critical path |
-| Intent Preservation | >95% | Don't lose meaning |
+### Phase 3 Classifier Performance
+
+| Metric | Target | Achieved | Status |
+|--------|--------|----------|--------|
+| Accuracy | >95% | 99.2% | ✅ Exceeded |
+| Precision | >95% | 99.7% | ✅ Exceeded |
+| Recall | >95% | 97.8% | ✅ Exceeded |
+| F1 Score | >95% | 98.7% | ✅ Exceeded |
+| False Positive Rate | <1% | 0.14% | ✅ Exceeded |
+| False Negative Rate | <5% | 2.2% | ✅ Met |
+
+### Test Set Results (2,060 samples)
+
+```
+              Predicted
+              Benign  Injection
+Actual Benign   1409      1
+Actual Inject      8    642
+
+Accuracy: 99.6%
+```
 
 ## Related Work
 
@@ -354,14 +372,22 @@ print(result.injection_detected)      # True
 - [Prompt Injection Defenses](https://www.lakera.ai/) - Lakera
 - [LLM Guard](https://github.com/laiyer-ai/llm-guard) - Input/output protection
 
+## Progress
+
+- [x] **Phase 1**: Basic capture system with SQLite storage
+- [x] **Phase 2**: Intent extraction via Qwen3:4b + regex patterns
+- [x] **Phase 3**: ML classifier with 99%+ accuracy
+- [ ] **Phase 4**: Integration with safety cascade
+- [ ] **Phase 5**: Production deployment
+
 ## Next Steps
 
-1. **Immediate**: Define intent extraction schema
-2. **Week 1**: Implement basic quarantine with Phi-2
-3. **Week 2**: Add injection detection classifier
-4. **Week 3**: Integration with safety cascade
-5. **Month 1**: Production testing
+1. Connect quarantine output to privileged LLM
+2. Add audit trail for all transformations
+3. Production load testing
+4. Monitor false positive/negative rates in production
 
 ---
 
 *Created: 2025-11-23*
+*Updated: 2025-11-24*

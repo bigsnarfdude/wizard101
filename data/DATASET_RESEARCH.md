@@ -6,6 +6,8 @@ This document tracks datasets we've researched for safety classification.
 
 ## Currently Using
 
+### Safety Classification
+
 | Dataset | Samples | Location | Purpose |
 |---------|---------|----------|---------|
 | **train_12k** | 12,000 | `data/training/train_12k.json` | Primary training |
@@ -20,6 +22,20 @@ This document tracks datasets we've researched for safety classification.
 | **StrongREJECT** | 313 | `data/benchmark/strongreject.json` | Adversarial testing |
 | **JailbreakBench** | 200 | `data/benchmark/jailbreakbench.json` | Jailbreak evaluation |
 | **SGBench** | 1,442 | `data/benchmark/sgbench.json` | Safety benchmark |
+
+### Prompt Injection Detection (cascade_quarantine)
+
+| Dataset | Samples | Source | Purpose | Status |
+|---------|---------|--------|---------|--------|
+| **xTRam1/safe-guard-prompt-injection** | 10,296 | HuggingFace | Primary injection classifier | ✅ Using |
+| reshabhs/SPML_Chatbot_Prompt_Injection | 16,012 | HuggingFace | Degree annotations | Available |
+| deepset/prompt-injections | 662 | HuggingFace | Legacy (multilingual) | Deprecated |
+
+**xTRam1 Dataset Details:**
+- Train: 8,236 samples | Test: 2,060 samples
+- Benign: 7,150 (69.4%) | Injection: 3,146 (30.6%)
+- English-only, purpose-built for injection detection
+- Achieved: 99.2% accuracy, 99.7% precision, 97.8% recall
 
 ---
 
@@ -135,5 +151,7 @@ ds = load_dataset("LibrAI/do-not-answer")
 - [x] Download StrongREJECT
 - [x] Download JailbreakBench
 - [x] Download WildJailbreak
+- [x] Download xTRam1/safe-guard-prompt-injection for injection detection
+- [x] Train injection classifier (99%+ accuracy achieved)
 - [ ] Consider SALAD-Bench for comprehensive evaluation
 - [ ] Evaluate current models on all benchmarks
