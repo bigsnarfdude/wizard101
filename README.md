@@ -1,4 +1,4 @@
-# Wizard101 - Complete AI Safety Cascade
+# Wizard101 - AI Safety Cascade
 
 **Cascata Fiduciae Fundata** (Cascade of Founded Trust)
 
