@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from gliner2 import GLiNER2
+from presidio_analyzer import AnalyzerEngine, RecognizerRegistry
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 from . import config
 
 
@@ -20,7 +22,7 @@ class Detection:
     start: int
     end: int
     confidence: float
-    stage: str  # "secrets" or "gliner2"
+    stage: str  # "secrets", "presidio", or "gliner2"
 
 
 @dataclass
@@ -36,11 +38,12 @@ class ProcessResult:
 
 class DLPCascade:
     """
-    DLP pipeline using GLiNER2 for semantic PII detection.
+    DLP pipeline using Presidio + GLiNER2 hybrid approach.
 
     Architecture:
         Stage 0: Secret patterns (regex) - <1ms
-        Stage 1: GLiNER2 (semantic) - ~80ms
+        Stage 1a: Presidio (span detection) - ~5ms
+        Stage 1b: GLiNER2 (semantic validation) - ~80ms
         Stage 2: Policy engine - <1ms
         Stage 3: Redactor - <1ms
         Stage 4: Audit - <1ms
@@ -50,6 +53,8 @@ class DLPCascade:
         self,
         model_name: str = config.MODEL_NAME,
         pii_types: List[str] = None,
+        use_presidio: bool = True,
+        use_gliner: bool = True,
     ):
         """
         Initialize the DLP cascade.
@@ -57,8 +62,12 @@ class DLPCascade:
         Args:
             model_name: GLiNER2 model to use
             pii_types: List of PII types to detect
+            use_presidio: Enable Presidio for span detection
+            use_gliner: Enable GLiNER2 for semantic validation
         """
         self.pii_types = pii_types or config.PII_TYPES
+        self.use_presidio = use_presidio
+        self.use_gliner = use_gliner
 
         # Compile secret patterns
         self.secret_patterns = {}
@@ -68,10 +77,25 @@ class DLPCascade:
                 "confidence": cfg["confidence"],
             }
 
-        # Load GLiNER2 model
-        print(f"Loading GLiNER2 model: {model_name}")
-        self.model = GLiNER2.from_pretrained(model_name)
-        print(f"Configured {len(self.pii_types)} PII types")
+        # Initialize Presidio
+        if self.use_presidio:
+            print("Loading Presidio analyzer...")
+            # Use spaCy small model for speed
+            nlp_config = {
+                "nlp_engine_name": "spacy",
+                "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+            }
+            provider = NlpEngineProvider(nlp_configuration=nlp_config)
+            nlp_engine = provider.create_engine()
+            self.presidio = AnalyzerEngine(nlp_engine=nlp_engine)
+            print("Presidio loaded")
+
+        # Initialize GLiNER2
+        if self.use_gliner:
+            print(f"Loading GLiNER2 model: {model_name}")
+            self.model = GLiNER2.from_pretrained(model_name)
+            print(f"Configured {len(self.pii_types)} PII types")
+
 
     def process(self, text: str) -> ProcessResult:
         """
@@ -91,8 +115,8 @@ class DLPCascade:
         # Stage 0: Secret patterns (deterministic)
         detections.extend(self._detect_secrets(text))
 
-        # Stage 1: GLiNER2 (semantic)
-        detections.extend(self._detect_gliner2(text))
+        # Stage 1: Hybrid Presidio + GLiNER2
+        detections.extend(self._detect_hybrid(text))
 
         # Deduplicate overlapping detections
         detections = self._deduplicate(detections)
@@ -138,28 +162,124 @@ class DLPCascade:
 
         return detections
 
-    def _detect_gliner2(self, text: str) -> List[Detection]:
-        """Stage 1: Detect PII using GLiNER2."""
+    def _detect_hybrid(self, text: str) -> List[Detection]:
+        """
+        Stage 1: Hybrid Presidio + GLiNER2 detection.
+        
+        Presidio provides accurate spans, GLiNER2 validates/enriches.
+        """
+        detections = []
+
+        # Step 1: Presidio finds spans
+        if self.use_presidio:
+            presidio_results = self._detect_presidio(text)
+            detections.extend(presidio_results)
+
+        # Step 2: GLiNER2 validates and finds additional entities
+        if self.use_gliner:
+            gliner_results = self._detect_gliner2_validation(text, detections)
+            detections.extend(gliner_results)
+
+        return detections
+
+    def _detect_presidio(self, text: str) -> List[Detection]:
+        """Use Presidio for accurate span detection."""
         detections = []
 
         try:
-            entities = self.model.extract_entities(text, self.pii_types)
+            # Map our PII types to Presidio entities
+            presidio_entities = self._map_to_presidio_entities(self.pii_types)
+            
+            # Analyze with Presidio
+            results = self.presidio.analyze(
+                text=text,
+                entities=presidio_entities,
+                language="en"
+            )
 
-            for entity in entities:
+            for result in results:
                 detection = Detection(
-                    entity_type=entity["label"],
-                    text=entity["text"],
-                    start=entity["start"],
-                    end=entity["end"],
-                    confidence=entity.get("score", 0.9),
-                    stage="gliner2",
+                    entity_type=result.entity_type.lower().replace("_", " "),
+                    text=text[result.start:result.end],
+                    start=result.start,
+                    end=result.end,
+                    confidence=result.score,
+                    stage="presidio",
                 )
                 detections.append(detection)
 
         except Exception as e:
-            print(f"GLiNER2 detection error: {e}")
+            print(f"Presidio detection error: {e}")
 
         return detections
+
+    def _detect_gliner2_validation(self, text: str, existing_detections: List[Detection]) -> List[Detection]:
+        """
+        Use GLiNER2 to validate Presidio results and find additional entities.
+        """
+        detections = []
+
+        try:
+            # Get GLiNER2 predictions
+            results = self.model.extract_entities(text, self.pii_types)
+            
+            if "entities" in results:
+                for pii_type, entity_list in results["entities"].items():
+                    for entity_text in entity_list:
+                        # Find position in text
+                        pos = text.find(entity_text)
+                        if pos == -1:
+                            continue
+                        
+                        # Check if this overlaps with existing Presidio detection
+                        overlaps_presidio = False
+                        for existing in existing_detections:
+                            if not (pos + len(entity_text) <= existing.start or pos >= existing.end):
+                                overlaps_presidio = True
+                                break
+                        
+                        # If it doesn't overlap, it's a new detection GLiNER2 found
+                        if not overlaps_presidio:
+                            detection = Detection(
+                                entity_type=pii_type,
+                                text=entity_text,
+                                start=pos,
+                                end=pos + len(entity_text),
+                                confidence=0.85,  # GLiNER2 semantic confidence
+                                stage="gliner2",
+                            )
+                            detections.append(detection)
+
+        except Exception as e:
+            print(f"GLiNER2 validation error: {e}")
+
+        return detections
+
+    def _map_to_presidio_entities(self, pii_types: List[str]) -> List[str]:
+        """Map our PII types to Presidio's entity names."""
+        mapping = {
+            "person name": "PERSON",
+            "first name": "PERSON",
+            "last name": "PERSON",
+            "email address": "EMAIL_ADDRESS",
+            "phone number": "PHONE_NUMBER",
+            "social security number": "US_SSN",
+            "credit card number": "CREDIT_CARD",
+            "ip address": "IP_ADDRESS",
+            "date of birth": "DATE_TIME",
+            "street address": "LOCATION",
+            "city": "LOCATION",
+            "medical record number": "MEDICAL_LICENSE",
+            "driver license number": "US_DRIVER_LICENSE",
+            "bank account number": "US_BANK_NUMBER",
+        }
+        
+        presidio_entities = set()
+        for pii_type in pii_types:
+            if pii_type in mapping:
+                presidio_entities.add(mapping[pii_type])
+        
+        return list(presidio_entities) if presidio_entities else None
 
     def _deduplicate(self, detections: List[Detection]) -> List[Detection]:
         """Remove overlapping detections, prefer higher confidence."""
