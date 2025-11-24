@@ -178,6 +178,16 @@ SECRET_PATTERNS = {
         "confidence": 0.75,
         "description": "Password in URL",
     },
+    "PASSWORD_DISCLOSURE": {
+        "pattern": r"(?i)(?:your|the|my|temp|temporary|default|initial|new)\s+password\s+(?:is|:)\s*['\"]?([A-Za-z0-9!@#$%^&*_\-+=]{6,})['\"]?",
+        "confidence": 0.80,
+        "description": "Natural language password disclosure",
+    },
+    "PASSWORD_LABELED": {
+        "pattern": r"(?i)password\s*:\s*['\"]?([A-Za-z0-9!@#$%^&*_\-+=]{6,})['\"]?",
+        "confidence": 0.75,
+        "description": "Labeled password value",
+    },
 
     # Generic Secrets
     "GENERIC_API_KEY": {
