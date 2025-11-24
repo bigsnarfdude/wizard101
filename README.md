@@ -59,9 +59,9 @@ The Wizard101 safety cascade consists of four specialized protection layers:
 
 | Layer | Purpose | Speed | Status |
 |-------|---------|-------|--------|
-| **[cascade_inbound](#cascade_inbound-request-safety)** | Block harmful prompts | 2ms-8s | ✅ Production |
-| **[cascade_refusals](#cascade_refusals-refusal-generation)** | Generate appropriate refusals | ~1s | ✅ Production |
-| **[cascade_dlp](#cascade_dlp-data-loss-prevention)** | Detect PII/secrets in outputs | <10ms | ✅ Production |
+| **[cascade_inbound](#cascade_inbound-request-safety)** | Block harmful prompts | 2ms-8s | ✅ Built |
+| **[cascade_refusals](#cascade_refusals-refusal-generation)** | Generate appropriate refusals | ~1s | ✅ Built |
+| **[cascade_dlp](#cascade_dlp-data-loss-prevention)** | Detect PII/secrets in outputs | <10ms | ✅ Built |
 | **[cascade_quarantine](#cascade_quarantine-feedback-loop)** | Capture edge cases for retraining | N/A | 🔄 Planned |
 
 ---
@@ -156,7 +156,7 @@ print(f"Latency: {result.total_latency_ms}ms")  # 2.3
 
 ## cascade_refusals: Refusal Generation
 
-**Status**: ✅ Production Ready
+**Status**: ✅ Built
 **Purpose**: Determines HOW to refuse harmful content, not just IF it's harmful
 
 ### Refusal Taxonomy
