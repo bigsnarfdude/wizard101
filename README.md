@@ -14,23 +14,23 @@ The Wizard101 safety cascade consists of four specialized protection layers:
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│                     COMPLETE SAFETY PIPELINE                    │
+│                     COMPLETE SAFETY PIPELINE                   │
 ├────────────────────────────────────────────────────────────────┤
-│                                                                 │
+│                                                                │
 │  User Input                          Model Response            │
-│      │                                    │                     │
-│      ▼                                    ▼                     │
-│  ┌──────────────┐                 ┌──────────────┐           │
-│  │   INBOUND    │                 │   OUTBOUND   │           │
-│  │   CASCADE    │                 │     DLP      │           │
-│  └──────┬───────┘                 └──────┬───────┘           │
-│         │                                 │                     │
+│      │                                    │                    │
+│      ▼                                    ▼                    │
+│  ┌──────────────┐                 ┌──────────────┐             │
+│  │   INBOUND    │                 │   OUTBOUND   │             │
+│  │   CASCADE    │                 │     DLP      │             │
+│  └──────┬───────┘                 └──────┬───────┘             │
+│         │                                │                     │
 │         ├─► harmful? ──► REFUSAL         ├─► secrets? ──► BLOCK│
-│         │                GENERATOR        │                     │
-│         └─► safe ────────┐               └─► clean ────────┐  │
-│                           ▼                                  ▼   │
-│                      MODEL PROCESSING                    RESPONSE│
-│                                                                 │
+│         │                GENERATOR       │                     │
+│         └─► safe ────────┐               └─► clean ────────┐   │
+│                          ▼                                 ▼   │
+│                    MODEL PROCESSING                    RESPONSE│
+│                                                                │
 └────────────────────────────────────────────────────────────────┘
 ```
 
