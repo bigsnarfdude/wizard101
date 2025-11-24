@@ -354,15 +354,15 @@ return response
 
 ```
 ┌────────────────────────────────────────────────┐
-│             FEEDBACK COLLECTION                 │
+│             FEEDBACK COLLECTION                │
 ├────────────────────────────────────────────────┤
-│                                                 │
+│                                                │
 │  False Positives → cascade_quarantine/fp/      │
 │  False Negatives → cascade_quarantine/fn/      │
 │  Edge Cases      → cascade_quarantine/edge/    │
-│                                                 │
+│                                                │
 │  Human Review → Labeling → Retraining Dataset  │
-│                                                 │
+│                                                │
 └────────────────────────────────────────────────┘
 ```
 
