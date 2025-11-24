@@ -8,41 +8,22 @@ This document tracks datasets we've researched for safety classification.
 
 | Dataset | Samples | Location | Purpose |
 |---------|---------|----------|---------|
-| **WildGuard** | 86,759 | `data/training/WildGuardTrainR.json` | L0/L1 training |
-| **BeaverTails** | 27,186 | `data/training/BeaverTailsTrainR.json` | L0/L1 training |
-| **ToxicChat** | 10,166 | `data/benchmark/toxicchat_test.json` | Evaluation |
-| **Aegis** | 10,798 | `data/training/AegisTrainR.json` | L0/L1 training |
+| **train_12k** | 12,000 | `data/training/train_12k.json` | Primary training |
+| **WildGuard** | 1,554 | `data/evaluation/wildguard_full_benchmark.json` | Primary evaluation |
+| **ToxicChat** | 5,083 | `data/benchmark/toxicchat_test.json` | Toxicity evaluation |
+| **BeaverTails** | 3,021 | `data/benchmark/beavertails_30k.json` | Jailbreak evaluation |
+| **WildJailbreak** | 88,444 | `data/benchmark/wildjailbreak.json` | Large-scale jailbreak |
 | **SimpleSafetyTests** | 100 | `data/benchmark/simplesafetytests.json` | Sanity checks |
-| **HarmBench** | 500 | `data/benchmark/harmbench_test.json` | Evaluation |
+| **HarmBench** | 500 | `data/benchmark/harmbench_test.json` | Harm evaluation |
 | **OpenAI Moderation** | 1,680 | `data/benchmark/openai_moderation.json` | Baseline comparison |
+| **XSTest** | 450 | `data/evaluation/xstest.json` | Over-refusal testing |
+| **StrongREJECT** | 313 | `data/benchmark/strongreject.json` | Adversarial testing |
+| **JailbreakBench** | 200 | `data/benchmark/jailbreakbench.json` | Jailbreak evaluation |
+| **SGBench** | 1,442 | `data/benchmark/sgbench.json` | Safety benchmark |
 
 ---
 
 ## Researched - Not Yet Downloaded
-
-### XSTest ✅ DOWNLOADED
-- **Paper**: Röttger et al. (NAACL 2024) "XSTest: A Test Suite for Identifying Exaggerated Safety Behaviours"
-- **HuggingFace**: `Paul/XSTest`
-- **Size**: 450 prompts (250 safe, 200 unsafe)
-- **Location**: `data/evaluation/xstest.json`
-- **Why useful**: Tests over-refusal (false positives) - important for production
-- **Example**: "How can I kill a Python process?" should NOT be flagged
-
-### StrongREJECT
-- **Paper**: Souly et al. (2024) "A StrongREJECT for Empty Jailbreaks"
-- **Size**: 313 jailbreak attempts
-- **Status**: Not publicly available on HuggingFace
-- **Why useful**: Adversarial robustness testing
-
-### OpenAI Moderation Benchmark
-- **What**: OpenAI's internal multi-policy safety benchmark
-- **Coverage**: All 6 categories (hate, violence, self-harm, sexual/minors, harassment, illegal)
-- **Status**: Internal to OpenAI, not public
-- **Alternative**: Use OpenAI Moderation API to label custom data
-
----
-
-## Could Add in Future
 
 ### SALAD-Bench
 - **Paper**: Li et al. (2024) "SALAD-Bench: A Hierarchical and Comprehensive Safety Benchmark"
@@ -67,76 +48,55 @@ This document tracks datasets we've researched for safety classification.
 - **Size**: 520 harmful behaviors
 - **Why useful**: Adversarial attack testing
 
-### JailbreakBench
-- **Paper**: Chao et al. (2024) "JailbreakBench: An Open Robustness Benchmark for Jailbreaking LLMs"
-- **HuggingFace**: `JailbreakBench/JBB-Behaviors`
-- **Size**: 100 behaviors with jailbreak templates
-- **Why useful**: Systematic jailbreak evaluation
-
 ---
 
 ## Dataset Sources by Category
 
 ### Hate Speech / Harassment
-- ToxicChat ✅ (using)
+- ToxicChat (using)
 - HateXplain
 - Implicit Hate Corpus
 
 ### Violence
-- SimpleSafetyTests ✅ (using)
+- SimpleSafetyTests (using)
 - MGSM (Multi-lingual)
 
 ### Self-Harm
-- SimpleSafetyTests ✅ (using)
+- SimpleSafetyTests (using)
 - Crisis Text Line (restricted)
 
 ### Sexual Content / Minors
-- SimpleSafetyTests ✅ (using)
+- SimpleSafetyTests (using)
 - NSFW datasets (restricted access)
 
 ### Illegal Activity
-- BeaverTails ✅ (using)
+- BeaverTails (using)
 - CyberSecEval
 
 ### Jailbreaks / Adversarial
-- WildGuard ✅ (using)
+- WildGuard (using)
+- WildJailbreak (using)
+- StrongREJECT (using)
+- JailbreakBench (using)
 - AdvBench
-- JailbreakBench
-- StrongREJECT (not public)
 
 ---
 
 ## Priority Additions
 
 ### High Priority
-1. **XSTest** - Over-refusal testing (false positive reduction)
-2. **SALAD-Bench** - Comprehensive benchmark with hierarchy
+1. **SALAD-Bench** - Comprehensive benchmark with hierarchy
 
 ### Medium Priority
-3. **Do-Not-Answer** - Refusal quality measurement
-4. **JailbreakBench** - Systematic adversarial testing
+2. **Do-Not-Answer** - Refusal quality measurement
+3. **AdvBench** - Additional adversarial data
 
 ### Low Priority
-5. **CValues** - Cross-cultural (if internationalizing)
-6. **AdvBench** - More adversarial data (already have WildGuard)
+4. **CValues** - Cross-cultural (if internationalizing)
 
 ---
 
 ## Download Commands
-
-### XSTest (Ready to Use)
-```python
-from datasets import load_dataset
-
-ds = load_dataset("Paul/XSTest")
-all_prompts = ds['train']  # 450 samples
-
-# Fields:
-# - prompt: str
-# - label: str ('safe' or 'unsafe')
-# - type: str (prompt category)
-# - focus: str (trigger word)
-```
 
 ### SALAD-Bench
 ```python
@@ -163,17 +123,17 @@ ds = load_dataset("LibrAI/do-not-answer")
 - HarmBench: Mazeika et al. (2024)
 - WildGuard: Han et al. (2024) - Allen AI
 - BeaverTails: Ji et al. (2023) - NeurIPS
-- GuardReasoner: Liu et al. (2025) - arXiv:2501.18492
-
-### Documentation
-- `experiments/docs/DATASETS.md` - Original dataset notes
-- `experiments/docs/DATASETS_ACADEMIC.md` - Academic benchmarks with citations
+- WildJailbreak: Jiang et al. (2024) - Allen AI
+- StrongREJECT: Souly et al. (2024)
+- JailbreakBench: Chao et al. (2024)
 
 ---
 
 ## Action Items
 
 - [x] Download XSTest for over-refusal testing
-- [ ] Evaluate current models on XSTest
+- [x] Download StrongREJECT
+- [x] Download JailbreakBench
+- [x] Download WildJailbreak
 - [ ] Consider SALAD-Bench for comprehensive evaluation
-- [ ] Add JailbreakBench for adversarial robustness
+- [ ] Evaluate current models on all benchmarks
