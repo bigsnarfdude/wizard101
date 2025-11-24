@@ -34,7 +34,7 @@ The Wizard101 safety cascade consists of four specialized protection layers:
 │        │                                                │
 │        ▼                                                │
 │   ┌─────────┐                                           │
-│   │ Layer 3 │  QUARANTINE (this layer)                  │
+│   │ Layer 3 │  QUARANTINE                               │
 │   │         │  Sanitize before privileged LLM           │
 │   └────┬────┘                                           │
 │        │                                                │
