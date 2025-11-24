@@ -13,25 +13,46 @@ A comprehensive four-layer AI safety system that provides end-to-end protection 
 The Wizard101 safety cascade consists of four specialized protection layers:
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                     COMPLETE SAFETY PIPELINE                   │
-├────────────────────────────────────────────────────────────────┤
-│                                                                │
-│  User Input                          Model Response            │
-│      │                                    │                    │
-│      ▼                                    ▼                    │
-│  ┌──────────────┐                 ┌──────────────┐             │
-│  │   INBOUND    │                 │   OUTBOUND   │             │
-│  │   CASCADE    │                 │     DLP      │             │
-│  └──────┬───────┘                 └──────┬───────┘             │
-│         │                                │                     │
-│         ├─► harmful? ──► REFUSAL         ├─► secrets? ──► BLOCK│
-│         │                GENERATOR       │                     │
-│         └─► safe ────────┐               └─► clean ────────┐   │
-│                          ▼                                 ▼   │
-│                    MODEL PROCESSING                    RESPONSE│
-│                                                                │
-└────────────────────────────────────────────────────────────────┘
+```
+┌─────────────────────────────────────────────────────────┐
+│                    ONION SECURITY                       │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│   User Input                                            │
+│       │                                                 │
+│       ▼                                                 │
+│   ┌─────────┐                                           │
+│   │ Layer 1 │  Safety Cascade (L0→L1→L3)                │
+│   │         │  Block harmful prompts                    │
+│   └────┬────┘                                           │
+│        │                                                │
+│        ▼                                                │
+│   ┌─────────┐                                           │
+│   │ Layer 2 │  Refusal Cascade (Llama Guard)            │
+│   │         │  Route to appropriate refusal             │
+│   └────┬────┘                                           │
+│        │                                                │
+│        ▼                                                │
+│   ┌─────────┐                                           │
+│   │ Layer 3 │  QUARANTINE (this layer)                  │
+│   │         │  Sanitize before privileged LLM           │
+│   └────┬────┘                                           │
+│        │                                                │
+│        ▼                                                │
+│   ┌─────────┐                                           │
+│   │ Layer 4 │  Privileged LLM                           │
+│   │         │  Has tools, can take actions              │
+│   └────┬────┘                                           │
+│        │                                                │
+│        ▼                                                │
+│   ┌─────────┐                                           │
+│   │ Layer 5 │  DLP                                      │
+│   │         │  Block sensitive data in output           │
+│   └─────────┘                                           │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
 ```
 
 ### The Four Cascades
