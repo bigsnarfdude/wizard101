@@ -281,9 +281,49 @@ class InjectionClassifier:
         return [(feature_names[i], float(importance[i])) for i in indices]
 
 
+def load_training_data_v2() -> Tuple[List[str], List[int]]:
+    """
+    Load training data from xTRam1/safe-guard-prompt-injection dataset.
+
+    This is a high-quality, English-only dataset specifically designed
+    for prompt injection detection with clean labels.
+
+    Returns:
+        Tuple of (texts, labels) where label 1 = injection
+    """
+    from datasets import load_dataset
+
+    print("Loading xTRam1/safe-guard-prompt-injection dataset...")
+    ds = load_dataset("xTRam1/safe-guard-prompt-injection")
+
+    # Combine train and test
+    train_df = ds['train'].to_pandas()
+    test_df = ds['test'].to_pandas()
+
+    print(f"  Train: {len(train_df)} samples")
+    print(f"  Test: {len(test_df)} samples")
+
+    combined = pd.concat([train_df, test_df], ignore_index=True)
+
+    texts = combined['text'].tolist()
+    labels = combined['label'].tolist()
+
+    # Label distribution
+    n_benign = sum(1 for l in labels if l == 0)
+    n_injection = sum(1 for l in labels if l == 1)
+
+    print(f"\nTotal: {len(texts)} samples")
+    print(f"  Benign: {n_benign} ({100*n_benign/len(texts):.1f}%)")
+    print(f"  Injection: {n_injection} ({100*n_injection/len(texts):.1f}%)")
+
+    return texts, labels
+
+
 def load_training_data(data_dir: str = "/Users/vincent/development/wizard101") -> Tuple[List[str], List[int]]:
     """
     Load and combine training data from multiple sources.
+
+    DEPRECATED: Use load_training_data_v2() for cleaner data.
 
     Returns:
         Tuple of (texts, labels) where label 1 = injection
@@ -367,6 +407,7 @@ def load_training_data(data_dir: str = "/Users/vincent/development/wizard101") -
 def train_classifier(
     model_type: str = "logistic",
     save_path: str = "models/injection_classifier.pkl",
+    use_v2_data: bool = True,
 ) -> InjectionClassifier:
     """
     Train and save injection classifier.
@@ -374,6 +415,7 @@ def train_classifier(
     Args:
         model_type: "logistic", "random_forest", or "gradient_boosting"
         save_path: Path to save trained model
+        use_v2_data: Use xTRam1 dataset (True) or legacy data (False)
 
     Returns:
         Trained classifier
@@ -381,7 +423,10 @@ def train_classifier(
     print(f"Training {model_type} classifier...")
 
     # Load data
-    texts, labels = load_training_data()
+    if use_v2_data:
+        texts, labels = load_training_data_v2()
+    else:
+        texts, labels = load_training_data()
 
     # Train classifier
     classifier = InjectionClassifier(model_type=model_type)
