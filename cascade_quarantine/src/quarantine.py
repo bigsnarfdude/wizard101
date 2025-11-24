@@ -5,15 +5,22 @@ Uses Qwen3 via Ollama to extract user intent without following instructions.
 Zero privileges - cannot access tools, databases, or APIs.
 
 Based on Simon Willison's Dual LLM Pattern.
+
+Phase 2: Intent extraction via LLM
+Phase 3: ML classifier for injection detection
 """
 
 import json
+import os
 import re
 import time
 import requests
 from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, TYPE_CHECKING
 from enum import Enum
+
+if TYPE_CHECKING:
+    from .classifier import InjectionClassifier
 
 
 class SuspicionLevel(str, Enum):
@@ -50,6 +57,7 @@ class ExtractedIntent:
     processing_time_ms: float = 0.0
     model_used: str = ""
     raw_response: str = ""
+    classifier_probability: float = 0.0  # Phase 3: ML classifier confidence
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -65,6 +73,7 @@ class ExtractedIntent:
             "original_length": self.original_length,
             "processing_time_ms": self.processing_time_ms,
             "model_used": self.model_used,
+            "classifier_probability": self.classifier_probability,
         }
 
 
@@ -119,13 +128,71 @@ Return JSON with these fields:
         model: str = "qwen3:4b",
         ollama_url: str = "http://localhost:11434",
         timeout: int = 30,
+        classifier_path: Optional[str] = None,
+        use_classifier: bool = True,
     ):
+        """
+        Initialize quarantine system.
+
+        Args:
+            model: Ollama model for intent extraction
+            ollama_url: Ollama API URL
+            timeout: Request timeout in seconds
+            classifier_path: Path to trained classifier (auto-detects if None)
+            use_classifier: Whether to use ML classifier (Phase 3)
+        """
         self.model = model
         self.ollama_url = ollama_url
         self.timeout = timeout
         self._compiled_patterns = [
             re.compile(p, re.IGNORECASE) for p in self.INJECTION_PATTERNS
         ]
+
+        # Phase 3: Load ML classifier if available
+        self._classifier: Optional["InjectionClassifier"] = None
+        self._classifier_threshold = 0.5  # Probability threshold for injection
+
+        if use_classifier:
+            self._load_classifier(classifier_path)
+
+    def _load_classifier(self, path: Optional[str] = None):
+        """Load the trained injection classifier."""
+        if path is None:
+            # Auto-detect classifier path
+            candidates = [
+                "models/injection_classifier.pkl",
+                os.path.join(os.path.dirname(__file__), "..", "models", "injection_classifier.pkl"),
+                os.path.join(os.path.dirname(__file__), "models", "injection_classifier.pkl"),
+            ]
+            for candidate in candidates:
+                if os.path.exists(candidate):
+                    path = candidate
+                    break
+
+        if path and os.path.exists(path):
+            try:
+                from .classifier import InjectionClassifier
+                self._classifier = InjectionClassifier.load(path)
+            except ImportError:
+                try:
+                    from classifier import InjectionClassifier
+                    self._classifier = InjectionClassifier.load(path)
+                except ImportError:
+                    pass  # Classifier not available
+
+    def _classify_injection(self, text: str) -> tuple[bool, float]:
+        """
+        Use ML classifier to detect injection.
+
+        Returns:
+            Tuple of (is_injection, probability)
+        """
+        if self._classifier is None:
+            return False, 0.0
+
+        prob = self._classifier.predict_proba(text)
+        is_injection = prob >= self._classifier_threshold
+        return is_injection, prob
 
     def _detect_patterns(self, text: str) -> List[str]:
         """Detect known injection patterns in text."""
@@ -220,8 +287,11 @@ Return JSON with these fields:
         """
         start_time = time.time()
 
-        # Pre-check for known patterns
+        # Phase 2: Pre-check for known regex patterns
         detected_patterns = self._detect_patterns(untrusted_input)
+
+        # Phase 3: ML classifier check
+        classifier_injection, classifier_prob = self._classify_injection(untrusted_input)
 
         # Build prompt
         prompt = self.INTENT_EXTRACTION_PROMPT.format(input=untrusted_input)
@@ -252,11 +322,29 @@ Return JSON with these fields:
         # Extract fields with defaults (handle both old and new field names)
         model_patterns = parsed.get("suspicious", parsed.get("suspicious_patterns", []))
         all_patterns = list(set(detected_patterns + model_patterns))
-        injection_detected = parsed.get("injection", parsed.get("injection_detected", False)) or len(detected_patterns) > 0
+
+        # Combine detection sources:
+        # 1. Regex patterns (Phase 2)
+        # 2. LLM assessment
+        # 3. ML classifier (Phase 3)
+        llm_injection = parsed.get("injection", parsed.get("injection_detected", False))
+        injection_detected = (
+            len(detected_patterns) > 0  # Regex patterns found
+            or llm_injection  # LLM thinks it's injection
+            or classifier_injection  # ML classifier thinks it's injection
+        )
+
         confidence = float(parsed.get("confidence", 0.5))
 
+        # Adjust suspicion based on classifier probability
+        effective_pattern_count = len(all_patterns)
+        if classifier_prob >= 0.7:
+            effective_pattern_count += 2  # High classifier confidence = treat like 2 patterns
+        elif classifier_prob >= 0.5:
+            effective_pattern_count += 1  # Medium classifier confidence = treat like 1 pattern
+
         suspicion_level = self._determine_suspicion_level(
-            len(all_patterns),
+            effective_pattern_count,
             injection_detected,
             confidence,
         )
@@ -282,6 +370,7 @@ Return JSON with these fields:
             processing_time_ms=processing_time,
             model_used=self.model,
             raw_response=raw_response,
+            classifier_probability=classifier_prob,
         )
 
     def sanitize(self, untrusted_input: str) -> str:
