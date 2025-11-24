@@ -39,7 +39,7 @@
 │        │                                                │
 │        ▼                                                │
 │   ┌─────────┐                                           │
-│   │ Layer 5 │  DLP (Presidio)                           │
+│   │ Layer 5 │  DLP                                      │
 │   │         │  Block sensitive data in output           │
 │   └─────────┘                                           │
 │                                                         │
@@ -167,9 +167,68 @@ class QuarantinedLLM:
         return result
 ```
 
-## Implementation Plan
+## Implementation Status
 
-### Phase 1: Basic Intent Extraction
+### Phase 1: Basic Capture ✅ COMPLETE
+
+**Captures low-confidence cases from all cascades for human review.**
+
+```
+cascade_quarantine/
+├── src/
+│   ├── __init__.py       # Package exports
+│   ├── models.py         # QuarantineCase, LayerResult, CaptureReason
+│   ├── config.py         # QuarantineConfig settings
+│   ├── database.py       # SQLite storage with indexes
+│   └── capture.py        # CaptureHook for all cascades
+├── tests/
+│   └── test_quarantine.py  # 18 passing tests
+├── example.py            # Usage demonstration
+└── README.md
+```
+
+**Quick Integration:**
+
+```python
+from cascade_quarantine.src.capture import capture_if_low_confidence
+
+# After getting result from any cascade
+result = cascade.classify(text)
+capture_if_low_confidence(text, result)  # Captures if confidence < 0.75
+```
+
+**Full Integration:**
+
+```python
+from cascade_quarantine.src import CaptureHook, QuarantineConfig
+
+config = QuarantineConfig(
+    confidence_threshold=0.75,
+    database_path="logs/quarantine.db",
+)
+hook = CaptureHook(config)
+
+# In cascade_inbound
+result = cascade.classify(text)
+hook.capture_from_inbound(text, result, session_id="abc")
+
+# In cascade_dlp
+result = dlp.process(text, context)
+hook.capture_from_dlp(text, result, context)
+```
+
+**Capture Reasons:**
+- `LOW_CONFIDENCE` - confidence < 0.75
+- `LAYER_DISAGREEMENT` - L0 and L1 disagree with large confidence gap
+- `BORDERLINE_CASE` - confidence between 0.7 and 0.8
+- `AUDIT_SAMPLE` - random sampling of high-confidence cases
+
+**Database Schema:**
+- SQLite with indexes on timestamp, review_status, confidence, capture_reason
+- Full layer journey stored as JSON
+- Review workflow: PENDING → IN_REVIEW → APPROVED/CORRECTED
+
+### Phase 2: Intent Extraction (Planned)
 
 ```python
 # quarantine.py
@@ -187,13 +246,13 @@ class Quarantine:
         pass
 ```
 
-### Phase 2: Injection Detection
+### Phase 3: Injection Detection (Planned)
 
 - Train classifier on known injection patterns
 - Flag suspicious inputs for human review
 - Log all quarantine decisions
 
-### Phase 3: Integration
+### Phase 4: Integration (Planned)
 
 - Connect to safety cascade output
 - Feed sanitized input to privileged LLM
