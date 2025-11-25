@@ -1,6 +1,6 @@
 # Wizard101 - AI Safety Cascade
 
-**Cascata Fiduciae Fundata** (Cascade of Founded Trust)
+| **Cascata Fiduciae Fundata** (Cascade of Founded Trust)
 
 A comprehensive four-layer AI safety system that provides end-to-end protection from input validation to output filtering, combining speed, accuracy, and robustness through intelligent routing.
 
