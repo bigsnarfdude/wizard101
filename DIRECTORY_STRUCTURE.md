@@ -163,7 +163,7 @@ wizard101/
 |-------|-----------|--------|----------|
 | 1 | Inbound Safety | Production Ready | `cascade_inbound/` |
 | 2 | Refusal Generation | Built | `cascade_refusals/` |
-| 3 | Input Quarantine | Phases 1-3 Complete | `cascade_quarantine/` |
+| 3 | Input Quarantine | Phases 1-4 Complete | `cascade_quarantine/` |
 | 4 | Privileged LLM | External | (user's model) |
 | 5 | Data Loss Prevention | Production Ready | `cascade_dlp/` |
 
