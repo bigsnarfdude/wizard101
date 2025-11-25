@@ -251,6 +251,109 @@ class CaptureHook:
 
         return self._save_case(case)
 
+    def capture_from_quarantine(
+        self,
+        input_text: str,
+        result: "ExtractedIntent",
+        session_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+    ) -> Optional[QuarantineCase]:
+        """
+        Capture from cascade_quarantine (intent extraction / injection detection).
+
+        Captures ambiguous injection detection for human review.
+
+        Args:
+            input_text: Original user input
+            result: ExtractedIntent from Quarantine.extract_intent()
+            session_id: Optional session tracking
+            request_id: Optional request tracking
+
+        Returns:
+            QuarantineCase if captured, None otherwise
+        """
+        # Import here to avoid circular dependency
+        try:
+            from .quarantine import SuspicionLevel
+        except ImportError:
+            from quarantine import SuspicionLevel
+
+        # Determine capture reason based on quarantine result
+        capture_reason = None
+
+        # Capture if suspicion level is HIGH or CRITICAL
+        if result.suspicion_level in (SuspicionLevel.HIGH, SuspicionLevel.CRITICAL):
+            capture_reason = CaptureReason.SUSPICIOUS_PATTERN
+
+        # Capture if classifier probability is in uncertain zone (0.3-0.7)
+        elif 0.3 <= result.classifier_probability <= 0.7:
+            capture_reason = CaptureReason.BORDERLINE_CASE
+
+        # Capture if injection detected but confidence is low
+        elif result.injection_detected and result.confidence < 0.7:
+            capture_reason = CaptureReason.LOW_CONFIDENCE
+
+        # Audit sample for clean passes
+        if capture_reason is None:
+            if random.random() < self.config.audit_sample_rate:
+                capture_reason = CaptureReason.AUDIT_SAMPLE
+            else:
+                return None
+
+        # Build layer results for the three detection layers
+        layer_results = [
+            LayerResult(
+                layer="regex_patterns",
+                label="injection" if result.suspicious_patterns else "clean",
+                confidence=1.0 if result.suspicious_patterns else 0.0,
+                latency_ms=0.0,
+                metadata={"patterns": result.suspicious_patterns},
+            ),
+            LayerResult(
+                layer="ml_classifier",
+                label="injection" if result.classifier_probability >= 0.5 else "clean",
+                confidence=result.classifier_probability,
+                latency_ms=0.0,
+                metadata={},
+            ),
+            LayerResult(
+                layer="llm_analysis",
+                label="injection" if result.injection_detected else "clean",
+                confidence=result.confidence,
+                latency_ms=result.processing_time_ms,
+                metadata={
+                    "intent_category": result.intent_category,
+                    "suspicion_level": result.suspicion_level.value,
+                },
+            ),
+        ]
+
+        case = QuarantineCase(
+            case_id=QuarantineCase.generate_case_id(),
+            input_text=input_text,
+            capture_reason=capture_reason,
+            cascade_source=CascadeSource.QUARANTINE,
+            confidence=result.classifier_probability,
+            threshold=0.5,  # Classifier threshold
+            final_label="injection" if result.injection_detected else "safe",
+            stopped_at="quarantine",
+            layer_results=layer_results,
+            total_latency_ms=result.processing_time_ms,
+            session_id=session_id,
+            request_id=request_id,
+            metadata={
+                "primary_intent": result.primary_intent,
+                "intent_category": result.intent_category,
+                "sanitized_request": result.sanitized_request,
+                "suspicious_patterns": result.suspicious_patterns,
+                "classifier_probability": result.classifier_probability,
+                "safe_to_proceed": result.safe_to_proceed,
+                "model_used": result.model_used,
+            },
+        )
+
+        return self._save_case(case)
+
     def capture_generic(
         self,
         input_text: str,

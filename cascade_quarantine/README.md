@@ -310,11 +310,50 @@ print(result.classifier_probability)  # 0.90
 print(result.injection_detected)      # True
 ```
 
-### Phase 4: Integration (Planned)
+### Phase 4: Pipeline Integration ✅ COMPLETE
 
-- Connect to safety cascade output
-- Feed sanitized input to privileged LLM
-- Audit trail for all transformations
+**Full pipeline orchestrator with audit logging.**
+
+```python
+from cascade_quarantine.src.pipeline import SafeLLMPipeline
+
+# Initialize pipeline with your LLM callback
+def my_llm(input_dict):
+    return f"Response to: {input_dict['sanitized_request']}"
+
+pipeline = SafeLLMPipeline(
+    llm_callback=my_llm,
+    audit_db_path="logs/audit.db",
+)
+
+# Process user input through full safety pipeline
+result = pipeline.process("What is the capital of France?")
+
+print(result.response)           # LLM response
+print(result.safety_label)       # "safe"
+print(result.injection_detected) # False
+print(result.session_id)         # For audit trail
+```
+
+**Components:**
+- **SafeLLMPipeline**: Orchestrates all 5 cascades
+- **AuditLogger**: Tracks all transformations for compliance
+- **capture_from_quarantine**: Captures borderline cases for review
+
+**Audit Trail Stages:**
+1. `inbound_safety` - cascade_inbound classification
+2. `quarantine_analysis` - Intent extraction + injection detection
+3. `privileged_llm_input` - What goes to the LLM
+4. `privileged_llm_output` - What LLM generated
+5. `dlp_outbound_filter` - PII/secret detection
+6. `final_response` - What user receives
+
+```python
+# Get full audit trace for a session
+trace = pipeline.get_session_trace("session123")
+for entry in trace:
+    print(f"{entry['stage']}: {entry['decision']}")
+```
 
 ## Key Principles
 
@@ -377,15 +416,15 @@ Accuracy: 99.6%
 - [x] **Phase 1**: Basic capture system with SQLite storage
 - [x] **Phase 2**: Intent extraction via Qwen3:4b + regex patterns
 - [x] **Phase 3**: ML classifier with 99%+ accuracy
-- [ ] **Phase 4**: Integration with safety cascade
+- [x] **Phase 4**: Pipeline integration with audit logging
 - [ ] **Phase 5**: Production deployment
 
 ## Next Steps
 
-1. Connect quarantine output to privileged LLM
-2. Add audit trail for all transformations
-3. Production load testing
-4. Monitor false positive/negative rates in production
+1. Production load testing
+2. Monitor false positive/negative rates in production
+3. Add dashboard for audit trail visualization
+4. Integrate with alerting system for critical injections
 
 ---
 
