@@ -124,17 +124,25 @@ wizard101/
 │   │   ├── guardreasoner_test_10k.json
 │   │   ├── wildguard_full_benchmark.json
 │   │   └── xstest.json
-│   └── benchmark/                      #   Public benchmarks
-│       ├── beavertails_30k.json
-│       ├── combined_benchmark.json
-│       ├── harmbench_test.json
-│       ├── jailbreakbench.json
-│       ├── openai_moderation.json
-│       ├── sgbench.json
-│       ├── simplesafetytests.json
-│       ├── strongreject.json
-│       ├── toxicchat_test.json
-│       └── wildjailbreak.json
+│   ├── benchmark/                      #   Public benchmarks
+│   │   ├── beavertails_30k.json
+│   │   ├── combined_benchmark.json
+│   │   ├── harmbench_test.json
+│   │   ├── jailbreakbench.json
+│   │   ├── openai_moderation.json
+│   │   ├── sgbench.json
+│   │   ├── simplesafetytests.json
+│   │   ├── strongreject.json
+│   │   ├── toxicchat_test.json
+│   │   └── wildjailbreak.json
+│   └── archived/                       #   Historical R&D datasets (~710MB)
+│       ├── README.md
+│       ├── all_combined.json           #   GuardReasoner combined (357M)
+│       ├── WildGuardTrainR.json        #   WildGuard + reasoning (263M)
+│       ├── BeaverTailsTrainR.json      #   BeaverTails + reasoning (58M)
+│       ├── AegisTrainR.json            #   Aegis + reasoning (26M)
+│       ├── ToxicChatTrainR.json        #   ToxicChat + reasoning (5.5M)
+│       └── failure_analysis_full.json  #   DLP analysis (17M)
 │
 ├── docs/                               # DOCUMENTATION
 │   └── README.md                       #   Links to component docs
