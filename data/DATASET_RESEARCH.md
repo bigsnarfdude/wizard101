@@ -165,5 +165,14 @@ ds = load_dataset("LibrAI/do-not-answer")
 - [x] Download WildJailbreak
 - [x] Download xTRam1/safe-guard-prompt-injection for injection detection
 - [x] Train injection classifier (99%+ accuracy achieved)
-- [ ] Consider SALAD-Bench for comprehensive evaluation
-- [ ] Evaluate current models on all benchmarks
+- [ ] Download SALAD-Bench (21K base + 5K attack) - see `experiments/EXPERIMENT_PLAN.md`
+- [ ] Run full benchmark evaluation (~137K samples) - see `experiments/EXPERIMENT_PLAN.md`
+
+---
+
+## Planned Experiments
+
+See `experiments/EXPERIMENT_PLAN.md` for:
+
+1. **SALAD-Bench Integration** - Download and integrate 26K samples from ACL 2024 benchmark
+2. **Full Benchmark Evaluation** - Test cascade on all 12 benchmarks (~137K samples)
