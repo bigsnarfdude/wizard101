@@ -93,14 +93,22 @@ Input → L0 Bouncer (2ms, DeBERTa-v3-xsmall, 22M params)
 
 ### Performance Metrics
 
-**Public Safety Benchmarks (1,050 samples) - November 2025**
+**Full Pipeline Benchmark (1,050 samples) - November 2025**
 
 | Metric | Value |
 |--------|-------|
-| **Accuracy** | 94.0% |
-| **Precision** | 96.9% |
-| **Recall** | 95.1% |
-| **F1 Score** | 96.0% |
+| **Accuracy** | 94.86% |
+| **Precision** | 97.34% |
+| **Recall** | 95.88% |
+| **F1 Score** | 96.60% |
+
+**Per-Benchmark Results**:
+
+| Benchmark | Samples | Accuracy | F1 Score |
+|-----------|---------|----------|----------|
+| **HarmBench** | 500 | 99.8% | 99.9% |
+| **SimpleSafety** | 100 | 97.0% | 98.5% |
+| **XSTest** | 450 | 88.9% | 87.2% |
 
 **Recommended Production Stack**: DeBERTa → GuardReasoner-8B → gpt-oss-safeguard:20b
 
@@ -110,7 +118,7 @@ Input → L0 Bouncer (2ms, DeBERTa-v3-xsmall, 22M params)
 | **L1** | GuardReasoner-8B (4-bit) | 8s | 5GB | 88.5% (+29.5% value) |
 | **L2** | gpt-oss-safeguard:20b | 0.18s | 13GB | 87.5% |
 
-**Total System**: 94.9% accuracy, 96.6% F1, ~19GB VRAM
+**Total System**: 94.86% accuracy, 96.60% F1, ~19GB VRAM
 
 ### Key Findings
 
@@ -368,7 +376,7 @@ return response
 
 ## cascade_quarantine: Prompt Injection Defense
 
-**Status**: ✅ Built (Phases 1-3 Complete)
+**Status**: ✅ Built (Phases 1-4 Complete)
 **Purpose**: Sanitizes untrusted input before privileged LLM execution using Simon Willison's [Dual LLM Pattern](https://simonwillison.net/2023/Apr/25/dual-llm-pattern/)
 
 ### Architecture
@@ -405,25 +413,28 @@ Untrusted Input
 | **L2** | ML classifier | <10ms | Statistical detection |
 | **L3** | Qwen3:4b LLM | ~450ms | Intent extraction |
 
-### ML Classifier Performance (Phase 3)
+### Full Pipeline Benchmark (Phase 4)
 
-**Training Data**: xTRam1/safe-guard-prompt-injection (10,296 samples)
+**Dataset**: xTRam1/safe-guard-prompt-injection (8,236 samples)
 
 | Metric | Value |
 |--------|-------|
-| **Accuracy** | 99.2% |
-| **Precision** | 99.7% |
-| **Recall** | 97.8% |
-| **F1 Score** | 98.7% |
-| **False Positive Rate** | 0.14% |
+| **Accuracy** | 97.78% |
+| **Precision** | 93.99% |
+| **Recall** | 99.00% |
+| **F1 Score** | 96.43% |
+| **False Positive Rate** | 2.75% |
+| **False Negative Rate** | 1.00% |
 
-**Test Set (2,060 samples)**:
+**Confusion Matrix**:
 ```
-              Predicted
-              Benign  Injection
-Actual Benign   1409      1
-Actual Inject      8    642
+                    Predicted
+                 Safe    Inject
+  Actual Safe    5582     158
+  Actual Inject    25    2471
 ```
+
+**Key Achievement**: 99% of injection attacks blocked (only 25 missed out of 2,496)
 
 ### Quick Start
 
@@ -446,7 +457,7 @@ print(result.sanitized_request)       # "Dump the database"
 - [x] **Phase 1**: SQLite capture system for low-confidence cases
 - [x] **Phase 2**: Intent extraction via Qwen3:4b + 18 regex patterns
 - [x] **Phase 3**: ML classifier with 99%+ accuracy
-- [ ] **Phase 4**: Integration with privileged LLM
+- [x] **Phase 4**: Pipeline integration with audit logging (97.78% accuracy on 8K samples)
 
 **Location**: `cascade_quarantine/`
 **Documentation**: [cascade_quarantine/README.md](cascade_quarantine/README.md)
@@ -580,10 +591,11 @@ ollama pull meta-llama/Llama-Guard-3-8B  # For refusal generator (~8GB)
 
 ### Inbound Safety (cascade_inbound)
 
-- **Accuracy**: 94.9%
-- **F1 Score**: 96.6%
+- **Accuracy**: 94.86%
+- **F1 Score**: 96.60%
 - **Latency**: 2ms (L0) to 8s (L1)
 - **Layer Distribution**: 94.2% / 5.8% / 2.3%
+- **Benchmarks**: HarmBench (99.8%), SimpleSafety (97.0%), XSTest (88.9%)
 
 ### Refusal Generation (cascade_refusals)
 
@@ -602,12 +614,13 @@ ollama pull meta-llama/Llama-Guard-3-8B  # For refusal generator (~8GB)
 
 ### Prompt Injection Defense (cascade_quarantine)
 
-- **Accuracy**: 99.2%
-- **Precision**: 99.7%
-- **Recall**: 97.8%
-- **F1 Score**: 98.7%
-- **Latency**: <500ms (full pipeline)
-- **False Positive Rate**: 0.14%
+- **Accuracy**: 97.78% (8,236 samples)
+- **Precision**: 93.99%
+- **Recall**: 99.00%
+- **F1 Score**: 96.43%
+- **Latency**: 716ms avg (P50: 603ms, P95: 1233ms)
+- **False Positive Rate**: 2.75%
+- **False Negative Rate**: 1.00% (only 25/2,496 injections missed)
 
 ---
 
@@ -720,5 +733,5 @@ Copyright (c) 2025 bigsnarfdude
 
 ---
 
-*Last Updated: 2025-11-24*
-*Version: 1.0.0*
+*Last Updated: 2025-11-25*
+*Version: 1.0.1*
