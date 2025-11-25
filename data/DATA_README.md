@@ -9,11 +9,8 @@ data/
 ├── training/       # Training datasets
 ├── evaluation/     # Test and validation datasets
 ├── benchmark/      # Standardized benchmark datasets
-└── raw/            # Original source datasets
-
-archive/2024-11-experiments/  # Large datasets from experiments (not in git)
-├── guardreasoner-training/guardreasoner/guardreasoner_data/  # R-SFT training data
-└── benchmarks/                                                # Early benchmark experiments
+├── raw/            # Original source datasets
+└── archived/       # Historical R&D datasets (~710 MB)
 ```
 
 ---
@@ -26,7 +23,7 @@ archive/2024-11-experiments/  # Large datasets from experiments (not in git)
 | Evaluation | 5 | 17,204 | ~8.5 MB |
 | Benchmark | 10 | 111,167 | ~56 MB |
 | Raw | 2 | ~800 | ~58 KB |
-| **Archived (experiments)** | 5 | 127,544 | ~710 MB |
+| Archived | 7 | ~127,544 | ~710 MB |
 
 ---
 
@@ -124,10 +121,9 @@ Harmful/adversarial prompts for safety testing.
 
 ---
 
-## Archived Experiment Datasets
+## Archived Datasets (data/archived/)
 
-These large datasets were used in GuardReasoner R-SFT training experiments (Nov 2024).
-Located in: `archive/2024-11-experiments/guardreasoner-training/guardreasoner/guardreasoner_data/`
+Historical datasets from GuardReasoner R-SFT training experiments (Nov 2024).
 
 ### `all_combined.json` (127,544 samples, 357 MB)
 **PRIMARY TRAINING DATASET** for GuardReasoner experiments.
@@ -158,17 +154,8 @@ Aegis safety framework dataset with reasoning traces.
 ### `ToxicChatTrainR.json` (2,801 samples, 5.5 MB)
 ToxicChat toxicity detection dataset with reasoning traces.
 
-### Archived Benchmarks
-
-Located in: `archive/2024-11-experiments/benchmarks/`
-
-| File | Description |
-|------|-------------|
-| `wildguard_benchmark.json` | Early WildGuard evaluation set |
-| `academic_benchmark.json` | Academic paper test cases |
-| `balanced_benchmark.json` | Class-balanced test set |
-| `larger_benchmark.json` | Extended benchmark |
-| `test_dataset.json` | General test data |
+### `failure_analysis_full.json` (17 MB)
+DLP false negative analysis from early experiments.
 
 ---
 
@@ -201,8 +188,8 @@ print(f"Training samples: {len(train_data):,}")
 
 ### Load Archived R-SFT Data
 ```python
-# Large files - load from archive
-with open('archive/2024-11-experiments/guardreasoner-training/guardreasoner/guardreasoner_data/all_combined.json') as f:
+# Large files - load from data/archived/
+with open('data/archived/all_combined.json') as f:
     rsft_data = json.load(f)
 print(f"R-SFT samples: {len(rsft_data):,}")
 ```
@@ -243,7 +230,7 @@ def normalize_label(label):
 
 ## Notes
 
-1. **Large Files in Archive**: R-SFT training datasets (>100MB) are in `archive/` and excluded from git due to GitHub's file size limits.
+1. **Archived Datasets**: R-SFT training datasets (~710MB) are in `data/archived/` - used for GuardReasoner LoRA fine-tuning experiments.
 
 2. **3-Task Format**: GuardReasoner datasets include three classification tasks:
    - Task 1: Is the prompt harmful?
