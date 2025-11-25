@@ -383,6 +383,32 @@ for entry in trace:
 
 ## Metrics
 
+### Full Pipeline Benchmark (8,236 samples)
+
+Tested on xTRam1/safe-guard-prompt-injection dataset:
+
+| Metric | Value |
+|--------|-------|
+| **Accuracy** | **97.78%** |
+| Precision | 93.99% |
+| **Recall** | **99.00%** |
+| F1 Score | 96.43% |
+| False Positive Rate | 2.75% (158/5740) |
+| **False Negative Rate** | **1.00%** (25/2496) |
+
+```
+Confusion Matrix:
+                    Predicted
+                 Safe    Inject
+  Actual Safe    5582     158
+  Actual Inject    25    2471
+```
+
+**Key Findings:**
+- **99% of injection attacks blocked** (only 25 missed out of 2,496)
+- False positives mostly from "I want you to act as..." prompts (legitimate roleplay)
+- Average latency: 716ms (P50: 603ms, P95: 1233ms)
+
 ### Phase 3 Classifier Performance
 
 | Metric | Target | Achieved | Status |
@@ -394,7 +420,7 @@ for entry in trace:
 | False Positive Rate | <1% | 0.14% | ✅ Exceeded |
 | False Negative Rate | <5% | 2.2% | ✅ Met |
 
-### Test Set Results (2,060 samples)
+### Classifier Test Set (2,060 samples)
 
 ```
               Predicted
