@@ -11,10 +11,10 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
-from l0_bouncer import L0Bouncer
-from l1_analyst import L1Analyst
-from l2_gauntlet import L2Gauntlet
-from l3_judge import L3Judge
+from .l0_bouncer import L0Bouncer
+from .l1_analyst import L1Analyst
+from .l2_gauntlet import L2Gauntlet
+from .l3_judge import L3Judge
 
 
 @dataclass
