@@ -22,7 +22,7 @@ The Wizard101 safety cascade consists of four specialized protection layers:
 │       │                                                 │
 │       ▼                                                 │
 │   ┌─────────┐                                           │
-│   │ Layer 1 │  Safety Cascade (L0→L1→L3)                │
+│   │ Layer 1 │  Safety Cascade (L0→L1→L2)                │
 │   │         │  Block harmful prompts                    │
 │   └────┬────┘                                           │
 │        │                                                │
