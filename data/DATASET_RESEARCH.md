@@ -23,6 +23,18 @@ This document tracks datasets we've researched for safety classification.
 | **JailbreakBench** | 200 | `data/benchmark/jailbreakbench.json` | Jailbreak evaluation |
 | **SGBench** | 1,442 | `data/benchmark/sgbench.json` | Safety benchmark |
 
+### GuardReasoner R-SFT Training (Archived)
+
+| Dataset | Samples | Location | Purpose |
+|---------|---------|----------|---------|
+| **all_combined** | 127,544 | `data/archived/all_combined.json` | Combined R-SFT training |
+| **WildGuardTrainR** | 86,759 | `data/archived/WildGuardTrainR.json` | WildGuard + reasoning |
+| **BeaverTailsTrainR** | 27,186 | `data/archived/BeaverTailsTrainR.json` | BeaverTails + reasoning |
+| **AegisTrainR** | 10,798 | `data/archived/AegisTrainR.json` | Aegis + reasoning |
+| **ToxicChatTrainR** | 2,801 | `data/archived/ToxicChatTrainR.json` | ToxicChat + reasoning |
+
+*Used for GuardReasoner LoRA fine-tuning experiments (Nov 2024). Includes GPT-4o generated reasoning traces.*
+
 ### Prompt Injection Detection (cascade_quarantine)
 
 | Dataset | Samples | Source | Purpose | Status |
