@@ -31,12 +31,24 @@ scripts/
 |--------|---------|
 | `evaluate_cascade.py` | Main cascade evaluation (recommended) |
 | `evaluate_cascade_batch.py` | Batch evaluation for large datasets |
+| `evaluate_all_benchmarks.py` | Full benchmark suite (12 datasets, 131K samples) |
+| `benchmark_l0_only.py` | L0-only evaluation (fast, avoids L1/L2 dependencies) |
 | `evaluate_heretic.py` | Heretic dataset evaluation |
 | `evaluate_heretic_full.py` | Full Heretic evaluation suite |
 | `eval_l1_baseline.py` | L1 (GuardReasoner) baseline testing |
 | `tune_l0_threshold.py` | Threshold tuning for L0 bouncer |
 
 **Recommended:** Use `evaluate_cascade.py` for standard benchmarking.
+**For L0 benchmarks:** Use `benchmark_l0_only.py` for comprehensive L0-only evaluation.
+
+## Dataset Download Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `download_or_bench.py` | Download OR-Bench (82K samples) from HuggingFace |
+| `download_wildjailbreak.py` | Download WildJailbreak dataset |
+
+**OR-Bench**: Over-refusal benchmark with prompts that seem harmful but are safe (stress tests FPR).
 
 ## Utility Scripts (`utils/`)
 

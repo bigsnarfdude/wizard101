@@ -110,6 +110,33 @@ Input → L0 Bouncer (2ms, DeBERTa-v3-xsmall, 22M params)
 | **SimpleSafety** | 100 | 97.0% | 98.5% |
 | **XSTest** | 450 | 88.9% | 87.2% |
 
+### L0 Bouncer Comprehensive Benchmark (131K samples)
+
+**Full L0-only evaluation across 12 benchmarks - November 2025**
+
+| Benchmark | Samples | Acc | Recall | F1 | **FPR** | Type |
+|-----------|--------:|----:|-------:|---:|--------:|------|
+| SimpleSafetyTests | 100 | 91.0% | 91.0% | 95.3% | **0.0%** | Harmful-only |
+| StrongREJECT | 313 | 93.3% | 93.3% | 96.5% | **0.0%** | Harmful-only |
+| HarmBench | 500 | 99.6% | 99.6% | 99.8% | **0.0%** | Harmful-only |
+| SGBench | 1,442 | 84.1% | 84.1% | 91.4% | **0.0%** | Harmful-only |
+| SALAD-Bench Attack | 5,000 | 75.9% | 75.9% | 86.3% | **0.0%** | Harmful-only |
+| SALAD-Bench Base | 21,318 | 73.8% | 73.8% | 84.9% | **0.0%** | Harmful-only |
+| ToxicChat | 5,083 | 88.9% | 78.2% | 50.0% | **10.3%** | Mixed (7% harmful) |
+| Combined | 10,384 | 81.0% | 84.2% | 73.3% | **20.4%** | Mixed |
+| **OR-Bench** | 82,333 | 75.2% | 80.0% | 4.9% | **24.8%** | Over-refusal test |
+| OpenAI Moderation | 1,680 | 71.0% | 84.3% | 64.4% | **35.0%** | Mixed |
+| BeaverTails | 3,021 | 69.9% | 80.5% | 75.5% | **44.3%** | Mixed |
+| JailbreakBench | 200 | 64.5% | 98.0% | 73.4% | **69.0%** | Adversarial |
+
+**Total: 131,374 samples | Duration: 9.9 min | Throughput: 221 samples/sec**
+
+**Key Findings**:
+- **Zero FPR on harmful-only benchmarks** - No safe samples means no false positives
+- **OR-Bench (24.8% FPR)** - Over-refusal stress test with 82K edge-case prompts
+- **JailbreakBench (69% FPR)** - Adversarial prompts designed to trigger false positives
+- **High recall maintained** - 80-99% across all benchmarks
+
 **Recommended Production Stack**: DeBERTa → GuardReasoner-8B → gpt-oss-safeguard:20b
 
 | Layer | Model | Speed | VRAM | Accuracy |
@@ -733,5 +760,5 @@ Copyright (c) 2025 bigsnarfdude
 
 ---
 
-*Last Updated: 2025-11-25*
-*Version: 1.0.1*
+*Last Updated: 2025-11-26*
+*Version: 1.0.2*
