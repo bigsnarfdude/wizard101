@@ -39,6 +39,9 @@ BENCHMARKS = [
     ("salad_bench_attack.json", "SALAD-Bench Attack", 5000),
     ("salad_bench_base.json", "SALAD-Bench Base", 21318),
 
+    # OR-Bench (Over-Refusal Benchmark) - 99% safe, 1% harmful
+    ("or_bench.json", "OR-Bench", 82333),
+
     # Large benchmarks
     ("combined_benchmark.json", "Combined", 10384),
     # ("wildjailbreak.json", "WildJailbreak", 88444),  # Very large - run separately
@@ -150,15 +153,15 @@ def main():
     if args.l0_only:
         config = CascadeConfig(
             l0_confidence_threshold=0.5,  # Low threshold = L0 decides everything
-            enable_l1=False,
-            enable_l2=False
+            enable_l2=False,
+            enable_l3=False
         )
         print("Running L0-only evaluation (fast mode)")
     else:
         config = CascadeConfig(
             l0_confidence_threshold=args.threshold,
-            enable_l1=True,
-            enable_l2=True
+            enable_l2=True,
+            enable_l3=True
         )
         print(f"Running full cascade (threshold={args.threshold})")
 
