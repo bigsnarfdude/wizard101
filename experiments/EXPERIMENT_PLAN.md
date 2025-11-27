@@ -299,3 +299,151 @@ experiments/
 ---
 
 *Created: 2025-11-24*
+
+---
+
+## Phase 5: Cascade Optimization (NEXT STEPS)
+
+*Added: 2025-11-27*
+
+### Problem Statement
+
+Current eval results show:
+- High recall (catching harmful content) but low precision (too many false positives)
+- Expensive L3 Judge called too frequently
+- At scale (50% of traffic = safety checks), cost explodes
+
+### Current Results (11/12 benchmarks complete)
+
+| Dataset | Accuracy | Precision | Recall | F1 |
+|---------|----------|-----------|--------|-----|
+| SimpleSafetyTests | 95.0% | 100.0% | 95.0% | 97.4% |
+| JailbreakBench | 65.5% | 59.3% | 99.0% | 74.2% |
+| StrongREJECT | 95.5% | 100.0% | 95.5% | 97.7% |
+| HarmBench | 99.6% | 100.0% | 99.6% | 99.8% |
+| SGBench | 89.6% | 100.0% | 89.6% | 94.5% |
+| OpenAI Moderation | 74.1% | 55.0% | 90.8% | 68.5% |
+| BeaverTails | 70.1% | 69.5% | 85.3% | 76.6% |
+| ToxicChat | 91.5% | 44.8% | 81.5% | 57.8% |
+| SALAD-Bench Attack | 90.8% | 100.0% | 90.8% | 95.2% |
+| SALAD-Bench Base | 78.7% | 100.0% | 78.7% | 88.0% |
+| OR-Bench | 🔄 running | - | - | - |
+| Combined | pending | - | - | - |
+
+**Key Finding**: Variance across datasets (65-99%) IS the story. Single accuracy numbers are meaningless.
+
+### The Cost Problem
+
+```
+At 1M requests/day, 50% needing safety checks:
+- Current: L3 runs on ~20% of traffic = K+/month  
+- Target: L3 runs on <1% of traffic = K/month
+```
+
+### Optimization Strategy: Confidence-Based Fast Paths
+
+```
+Traffic Flow Target:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+L0 Bouncer (fast, cheap)     → 85% resolved
+  ├── Score > 0.95 harmful   → BLOCK immediately  
+  ├── Score < 0.05 safe      → PASS immediately
+  └── Score 0.05-0.95        → escalate
+
+L1 Analyst (medium cost)     → 13% resolved
+  ├── High confidence        → resolve locally
+  └── Low confidence         → escalate
+
+L2 Gauntlet (reduced)        → 1.9% resolved
+  ├── 2-3 experts (not 6)
+  └── Majority vote
+
+L3 Judge (rare, expensive)   → 0.1% only
+  └── True edge cases only
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Implementation Tasks
+
+#### Task 1: Analyze L0 Score Distribution
+```bash
+# Extract L0 confidence scores from eval run
+python scripts/analysis/l0_score_distribution.py
+
+# Questions to answer:
+# - What % of samples fall in uncertain range (0.05-0.95)?
+# - Where does L0 fail? (false positives vs false negatives)
+# - Can we shift the distribution with retraining?
+```
+
+#### Task 2: Add Calibration to L0
+```python
+# Convert raw logits to calibrated probabilities
+# Use temperature scaling or Platt scaling
+# Goal: When L0 says 95% confident, it should BE 95% accurate
+```
+
+#### Task 3: Retrain L0 with High-Confidence Examples
+```
+Training data priorities:
+1. Clear SAFE examples that current L0 escalates (reduce FP)
+2. Borderline cases from OpenAI Mod, BeaverTails
+3. Adversarial examples from JailbreakBench
+```
+
+#### Task 4: Benchmark L2 Experts
+```bash
+# Which experts actually change outcomes?
+python scripts/analysis/l2_expert_ablation.py
+
+# If expert_3 and expert_5 always agree with majority, remove them
+```
+
+#### Task 5: Add Confidence Thresholds
+```python
+# cascade_inbound/config.py updates:
+class CascadeConfig:
+    l0_block_threshold: float = 0.95   # Immediate block
+    l0_pass_threshold: float = 0.05    # Immediate pass
+    l1_confidence_threshold: float = 0.85
+    l2_enabled_experts: List[str] = [toxicity, jailbreak, harm]
+```
+
+#### Task 6: Measure Layer Distribution
+```
+After optimization, track:
+- % resolved at L0
+- % resolved at L1
+- % resolved at L2
+- % reaching L3
+
+Target: 85% / 13% / 1.9% / 0.1%
+```
+
+### Success Criteria (Post-Optimization)
+
+| Metric | Current | Target |
+|--------|---------|--------|
+| L0 resolution rate | ~60%? | 85% |
+| L3 call rate | ~20%? | <1% |
+| Overall accuracy | 80% | >85% |
+| Precision (borderline datasets) | 55% | >70% |
+| Cost per 1K safety checks |  | /bin/zsh.10 |
+
+### Files to Create
+
+```
+scripts/analysis/
+├── l0_score_distribution.py     # Analyze L0 confidence spread
+├── l2_expert_ablation.py        # Which experts matter?
+├── layer_traffic_analysis.py    # Where does traffic stop?
+└── calibration_analysis.py      # Is L0 well-calibrated?
+
+cascade_inbound/
+├── calibration.py               # Platt/temperature scaling
+└── config.py                    # Add confidence thresholds
+```
+
+---
+
+*Next: Complete OR-Bench + Combined eval, then start Task 1*

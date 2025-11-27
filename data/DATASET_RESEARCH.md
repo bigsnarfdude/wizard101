@@ -1,178 +1,138 @@
-# Dataset Research & Future Additions
+# Dataset Research & Benchmark Status
 
-This document tracks datasets we've researched for safety classification.
-
----
-
-## Currently Using
-
-### Safety Classification
-
-| Dataset | Samples | Location | Purpose |
-|---------|---------|----------|---------|
-| **train_12k** | 12,000 | `data/training/train_12k.json` | Primary training |
-| **WildGuard** | 1,554 | `data/evaluation/wildguard_full_benchmark.json` | Primary evaluation |
-| **ToxicChat** | 5,083 | `data/benchmark/toxicchat_test.json` | Toxicity evaluation |
-| **BeaverTails** | 3,021 | `data/benchmark/beavertails_30k.json` | Jailbreak evaluation |
-| **WildJailbreak** | 88,444 | `data/benchmark/wildjailbreak.json` | Large-scale jailbreak |
-| **SimpleSafetyTests** | 100 | `data/benchmark/simplesafetytests.json` | Sanity checks |
-| **HarmBench** | 500 | `data/benchmark/harmbench_test.json` | Harm evaluation |
-| **OpenAI Moderation** | 1,680 | `data/benchmark/openai_moderation.json` | Baseline comparison |
-| **XSTest** | 450 | `data/evaluation/xstest.json` | Over-refusal testing |
-| **StrongREJECT** | 313 | `data/benchmark/strongreject.json` | Adversarial testing |
-| **JailbreakBench** | 200 | `data/benchmark/jailbreakbench.json` | Jailbreak evaluation |
-| **SGBench** | 1,442 | `data/benchmark/sgbench.json` | Safety benchmark |
-
-### GuardReasoner R-SFT Training (Archived)
-
-| Dataset | Samples | Location | Purpose |
-|---------|---------|----------|---------|
-| **all_combined** | 127,544 | `data/archived/all_combined.json` | Combined R-SFT training |
-| **WildGuardTrainR** | 86,759 | `data/archived/WildGuardTrainR.json` | WildGuard + reasoning |
-| **BeaverTailsTrainR** | 27,186 | `data/archived/BeaverTailsTrainR.json` | BeaverTails + reasoning |
-| **AegisTrainR** | 10,798 | `data/archived/AegisTrainR.json` | Aegis + reasoning |
-| **ToxicChatTrainR** | 2,801 | `data/archived/ToxicChatTrainR.json` | ToxicChat + reasoning |
-
-*Used for GuardReasoner LoRA fine-tuning experiments (Nov 2024). Includes GPT-4o generated reasoning traces.*
-
-### Prompt Injection Detection (cascade_quarantine)
-
-| Dataset | Samples | Source | Purpose | Status |
-|---------|---------|--------|---------|--------|
-| **xTRam1/safe-guard-prompt-injection** | 10,296 | HuggingFace | Primary injection classifier | ✅ Using |
-| reshabhs/SPML_Chatbot_Prompt_Injection | 16,012 | HuggingFace | Degree annotations | Available |
-| deepset/prompt-injections | 662 | HuggingFace | Legacy (multilingual) | Deprecated |
-
-**xTRam1 Dataset Details:**
-- Train: 8,236 samples | Test: 2,060 samples
-- Benign: 7,150 (69.4%) | Injection: 3,146 (30.6%)
-- English-only, purpose-built for injection detection
-- Achieved: 99.2% accuracy, 99.7% precision, 97.8% recall
+This document tracks datasets and benchmark evaluations for wizard101 safety classification.
 
 ---
 
-## Researched - Not Yet Downloaded
+## Current Benchmark Evaluation (Nov 26, 2025)
 
-### SALAD-Bench
-- **Paper**: Li et al. (2024) "SALAD-Bench: A Hierarchical and Comprehensive Safety Benchmark"
-- **HuggingFace**: `OpenSafetyLab/Salad-Data`
-- **Size**: 30,000+ samples
-- **Why useful**: Comprehensive, hierarchical harm taxonomy
+Running full cascade evaluation on 12 datasets (~131K samples).
+
+**Status**: In progress  
+**Screen**: `195644.cascade-bench`  
+**Log**: `experiments/benchmark_run_20251126_002112.log`
+
+### Results So Far
+
+| Dataset | Samples | Accuracy | Precision | Recall | F1 | Status |
+|---------|---------|----------|-----------|--------|-----|--------|
+| SimpleSafetyTests | 100 | 95.0% | 100.0% | 95.0% | 97.4% | ✅ |
+| JailbreakBench | 200 | 65.5% | 59.3% | 99.0% | 74.2% | ✅ |
+| StrongREJECT | 313 | 95.5% | 100.0% | 95.5% | 97.7% | ✅ |
+| HarmBench | 500 | 99.6% | 100.0% | 99.6% | 99.8% | ✅ |
+| SGBench | 1,442 | 89.6% | 100.0% | 89.6% | 94.5% | ✅ |
+| OpenAI Moderation | 1,680 | 74.1% | 55.0% | 90.8% | 68.5% | ✅ |
+| BeaverTails | 3,021 | 70.1% | 69.5% | 85.3% | 76.6% | ✅ |
+| ToxicChat | 5,083 | - | - | - | - | 🔄 |
+| SALAD-Bench Attack | 5,000 | - | - | - | - | ⏳ |
+| SALAD-Bench Base | 21,318 | - | - | - | - | ⏳ |
+| OR-Bench | 82,333 | - | - | - | - | ⏳ |
+| Combined | 10,384 | - | - | - | - | ⏳ |
+
+### Key Observations
+
+1. **HarmBench** (99.6%): Best performance - well-structured harmful behavior prompts
+2. **JailbreakBench** (65.5%): Lower accuracy but 99% recall - catches attacks, over-flags benign
+3. **OpenAI Moderation** (74.1%): High recall (91%), low precision (55%) - borderline content
+4. **BeaverTails** (70.1%): Similar pattern - complex/ambiguous prompts
+
+---
+
+## Datasets In Use
+
+### Benchmark Suite (data/benchmark/)
+
+| Dataset | Samples | File | Source |
+|---------|---------|------|--------|
+| SimpleSafetyTests | 100 | `simplesafetytests.json` | Vidgen et al. 2023 |
+| JailbreakBench | 200 | `jailbreakbench.json` | Chao et al. 2024 |
+| StrongREJECT | 313 | `strongreject.json` | Souly et al. 2024 |
+| HarmBench | 500 | `harmbench_test.json` | Mazeika et al. 2024 |
+| SGBench | 1,442 | `sgbench.json` | Safety benchmark |
+| OpenAI Moderation | 1,680 | `openai_moderation.json` | OpenAI API comparison |
+| BeaverTails | 3,021 | `beavertails_30k.json` | Ji et al. 2023 |
+| ToxicChat | 5,083 | `toxicchat_test.json` | Lin et al. 2023 |
+| SALAD-Bench Attack | 5,000 | `salad_bench_attack.json` | Li et al. 2024 |
+| SALAD-Bench Base | 21,318 | `salad_bench_base.json` | Li et al. 2024 |
+| OR-Bench | 82,333 | `or_bench.json` | Over-refusal benchmark |
+| Combined | 10,384 | `combined_benchmark.json` | Multi-source |
+| WildJailbreak | 88,444 | `wildjailbreak.json` | Allen AI (run separately) |
+
+### Prompt Injection (cascade_quarantine)
+
+| Dataset | Samples | Status | Accuracy |
+|---------|---------|--------|----------|
+| xTRam1/safe-guard-prompt-injection | 8,236 | ✅ Complete | 97.78% |
+
+---
+
+## Data Sources
+
+| Source | HuggingFace | License |
+|--------|-------------|---------|
+| WildGuard | allenai/wildguard | Apache 2.0 |
+| BeaverTails | PKU-Alignment/BeaverTails | CC BY-NC 4.0 |
+| ToxicChat | lmsys/toxic-chat | CC BY-NC 4.0 |
+| HarmBench | cais/HarmBench | MIT |
+| WildJailbreak | allenai/wildjailbreak | Apache 2.0 |
+| StrongREJECT | dsbowen/strongreject | MIT |
+| JailbreakBench | JailbreakBench | MIT |
+| XSTest | Paul/XSTest | MIT |
+| SALAD-Bench | OpenSafetyLab/Salad-Data | Apache 2.0 |
+| OR-Bench | bench-llm/or-bench | MIT |
+
+---
+
+## Future Additions (Lower Priority)
 
 ### Do-Not-Answer
-- **Paper**: Wang et al. (2023) "Do-Not-Answer: A Dataset for Evaluating Safeguards in LLMs"
-- **HuggingFace**: `LibrAI/do-not-answer`
 - **Size**: 939 prompts
-- **Why useful**: Tests refusal quality, not just detection
-
-### CValues
-- **Paper**: Xu et al. (2023) "CValues: Measuring the Values of Chinese Large Language Models"
-- **HuggingFace**: `daven3/cvalues_responsibility_mc`
-- **Size**: 2,100 samples
-- **Why useful**: Cross-cultural safety norms
+- **Purpose**: Tests refusal quality, not just detection
+- **Status**: Not downloaded
 
 ### AdvBench
-- **Paper**: Zou et al. (2023) "Universal and Transferable Adversarial Attacks on Aligned Language Models"
 - **Size**: 520 harmful behaviors
-- **Why useful**: Adversarial attack testing
+- **Purpose**: Adversarial attack testing
+- **Status**: Not downloaded
+
+### CValues
+- **Size**: 2,100 samples
+- **Purpose**: Cross-cultural safety norms
+- **Status**: Not downloaded (only if internationalizing)
 
 ---
 
-## Dataset Sources by Category
+## Action Items
 
-### Hate Speech / Harassment
-- ToxicChat (using)
-- HateXplain
-- Implicit Hate Corpus
-
-### Violence
-- SimpleSafetyTests (using)
-- MGSM (Multi-lingual)
-
-### Self-Harm
-- SimpleSafetyTests (using)
-- Crisis Text Line (restricted)
-
-### Sexual Content / Minors
-- SimpleSafetyTests (using)
-- NSFW datasets (restricted access)
-
-### Illegal Activity
-- BeaverTails (using)
-- CyberSecEval
-
-### Jailbreaks / Adversarial
-- WildGuard (using)
-- WildJailbreak (using)
-- StrongREJECT (using)
-- JailbreakBench (using)
-- AdvBench
-
----
-
-## Priority Additions
-
-### High Priority
-1. **SALAD-Bench** - Comprehensive benchmark with hierarchy
-
-### Medium Priority
-2. **Do-Not-Answer** - Refusal quality measurement
-3. **AdvBench** - Additional adversarial data
-
-### Low Priority
-4. **CValues** - Cross-cultural (if internationalizing)
-
----
-
-## Download Commands
-
-### SALAD-Bench
-```python
-from datasets import load_dataset
-
-ds = load_dataset("OpenSafetyLab/Salad-Data")
-```
-
-### Do-Not-Answer
-```python
-from datasets import load_dataset
-
-ds = load_dataset("LibrAI/do-not-answer")
-```
+- [x] Download SimpleSafetyTests
+- [x] Download JailbreakBench
+- [x] Download StrongREJECT
+- [x] Download HarmBench
+- [x] Download SGBench
+- [x] Download OpenAI Moderation
+- [x] Download BeaverTails
+- [x] Download ToxicChat
+- [x] Download SALAD-Bench (base + attack)
+- [x] Download OR-Bench
+- [x] Download WildJailbreak
+- [x] Create evaluate_all_benchmarks.py
+- [x] Train prompt injection classifier (97.78% on 8K samples)
+- [ ] Complete full benchmark evaluation (~131K samples)
+- [ ] Generate final report with all results
+- [ ] Analyze false positives/negatives by category
 
 ---
 
 ## References
 
 ### Papers
-- ToxicChat: Lin et al. (2023) - EMNLP Findings
-- XSTest: Röttger et al. (2024) - NAACL
-- SimpleSafetyTests: Vidgen et al. (2023)
-- HarmBench: Mazeika et al. (2024)
-- WildGuard: Han et al. (2024) - Allen AI
-- BeaverTails: Ji et al. (2023) - NeurIPS
-- WildJailbreak: Jiang et al. (2024) - Allen AI
-- StrongREJECT: Souly et al. (2024)
-- JailbreakBench: Chao et al. (2024)
-
----
-
-## Action Items
-
-- [x] Download XSTest for over-refusal testing
-- [x] Download StrongREJECT
-- [x] Download JailbreakBench
-- [x] Download WildJailbreak
-- [x] Download xTRam1/safe-guard-prompt-injection for injection detection
-- [x] Train injection classifier (99%+ accuracy achieved)
-- [ ] Download SALAD-Bench (21K base + 5K attack) - see `experiments/EXPERIMENT_PLAN.md`
-- [ ] Run full benchmark evaluation (~137K samples) - see `experiments/EXPERIMENT_PLAN.md`
-
----
-
-## Planned Experiments
-
-See `experiments/EXPERIMENT_PLAN.md` for:
-
-1. **SALAD-Bench Integration** - Download and integrate 26K samples from ACL 2024 benchmark
-2. **Full Benchmark Evaluation** - Test cascade on all 12 benchmarks (~137K samples)
+- **ToxicChat**: Lin et al. (2023) - EMNLP Findings
+- **XSTest**: Röttger et al. (2024) - NAACL
+- **SimpleSafetyTests**: Vidgen et al. (2023)
+- **HarmBench**: Mazeika et al. (2024)
+- **WildGuard**: Han et al. (2024) - Allen AI
+- **BeaverTails**: Ji et al. (2023) - NeurIPS
+- **WildJailbreak**: Jiang et al. (2024) - Allen AI
+- **StrongREJECT**: Souly et al. (2024)
+- **JailbreakBench**: Chao et al. (2024)
+- **SALAD-Bench**: Li et al. (2024) - ACL
