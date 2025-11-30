@@ -68,7 +68,7 @@ The Wizard101 safety cascade consists of four specialized protection layers:
 
 ## cascade_inbound: Request Safety
 
-**Status**: ✅ Production Ready
+**Status**: Ready
 **Purpose**: Fast multi-tier content safety classification - determines IF content is harmful
 
 ### Architecture
