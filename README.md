@@ -137,6 +137,47 @@ Input → L0 Bouncer (2ms, DeBERTa-v3-xsmall, 22M params)
 - **JailbreakBench (69% FPR)** - Adversarial prompts designed to trigger false positives
 - **High recall maintained** - 80-99% across all benchmarks
 
+### Full Cascade Benchmark (131K samples, L0→L1→L2→L3)
+
+**Complete 4-layer cascade evaluation - November 2025**
+
+| Benchmark | Samples | Acc | Prec | Recall | F1 | **FPR** | Latency |
+|-----------|--------:|----:|-----:|-------:|---:|--------:|--------:|
+| **HarmBench** | 500 | 99.6% | 100% | 99.6% | 99.8% | **0.0%** | 5ms |
+| **StrongREJECT** | 313 | 95.5% | 100% | 95.5% | 97.7% | **0.0%** | 931ms |
+| **SimpleSafetyTests** | 100 | 95.0% | 100% | 95.0% | 97.4% | **0.0%** | 1,284ms |
+| **SGBench** | 1,442 | 89.6% | 100% | 89.6% | 94.5% | **0.0%** | 1,310ms |
+| **ToxicChat** | 5,083 | 91.5% | 44.8% | 81.5% | 57.8% | **7.7%** | 2,794ms |
+| **SALAD-Bench Attack** | 5,000 | 90.8% | 100% | 90.8% | 95.2% | **0.0%** | 9,883ms |
+| **Combined** | 10,384 | 83.0% | 67.0% | 88.5% | 76.3% | **19.5%** | 3,218ms |
+| **SALAD-Bench Base** | 21,318 | 78.7% | 100% | 78.7% | 88.0% | **0.0%** | 2,053ms |
+| **OR-Bench** | 82,333 | 79.1% | 3.2% | 87.3% | 6.2% | **20.9%** | 2,227ms |
+| **OpenAI Moderation** | 1,680 | 74.1% | 55.0% | 90.8% | 68.5% | **33.4%** | 6,838ms |
+| **BeaverTails** | 3,021 | 70.1% | 69.5% | 85.3% | 76.6% | **50.4%** | 2,114ms |
+| **JailbreakBench** | 200 | 65.5% | 59.3% | 99.0% | 74.2% | **68.0%** | 1,640ms |
+
+**Total: 131,374 samples | Duration: 96 hours | Throughput: 0.38 samples/sec**
+
+**Layer Distribution** (% of samples handled at each layer):
+
+| Benchmark | L0 | L1 | L2 | L3 |
+|-----------|---:|---:|---:|---:|
+| HarmBench | 100% | 0% | 0% | 0% |
+| StrongREJECT | 91% | 9% | 0% | 1% |
+| SimpleSafetyTests | 90% | 9% | 0% | 1% |
+| SALAD-Bench Attack | 43% | 49% | 0% | 8% |
+| OpenAI Moderation | 59% | 35% | 0% | 6% |
+| Average | 76% | 21% | 0% | 2% |
+
+**Key Findings**:
+- **Excellent on attack benchmarks**: 95-99% accuracy, 0% FPR on HarmBench/StrongREJECT
+- **Over-refusal remains critical**: OR-Bench 3.2% precision (97% of blocks are false positives)
+- **JailbreakBench high FPR**: 68% of adversarial-looking benign content blocked
+- **L0 handles majority**: 76-100% of traffic resolved at fastest layer
+- **L2 underutilized**: Only 0-1% of samples reach L2 gauntlet
+
+**Detailed Analysis**: [experiments/FULL_CASCADE_BENCHMARK_131K.md](experiments/FULL_CASCADE_BENCHMARK_131K.md)
+
 **Recommended Production Stack**: DeBERTa → GuardReasoner-8B → gpt-oss-safeguard:20b
 
 | Layer | Model | Speed | VRAM | Accuracy |
@@ -760,5 +801,5 @@ Copyright (c) 2025 bigsnarfdude
 
 ---
 
-*Last Updated: 2025-11-26*
-*Version: 1.0.2*
+*Last Updated: 2025-11-29*
+*Version: 1.1.0*

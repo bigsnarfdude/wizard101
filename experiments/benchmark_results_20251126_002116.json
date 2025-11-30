@@ -1,0 +1,310 @@
+{
+  "timestamp": "2025-11-26T00:21:16.147205",
+  "duration_seconds": 344643.635906,
+  "config": {
+    "l0_only": false,
+    "threshold": 0.9
+  },
+  "results": [
+    {
+      "name": "SimpleSafetyTests",
+      "file": "simplesafetytests.json",
+      "samples": 100,
+      "evaluated": 100,
+      "accuracy": 95.0,
+      "precision": 100.0,
+      "recall": 95.0,
+      "f1": 97.44,
+      "fpr": 0,
+      "avg_latency_ms": 1284.2,
+      "layer_distribution": {
+        "L0": 90,
+        "L1": 9,
+        "L2": 0,
+        "L3": 1
+      },
+      "confusion": {
+        "tp": 95,
+        "fp": 0,
+        "tn": 0,
+        "fn": 5
+      },
+      "errors": 0
+    },
+    {
+      "name": "JailbreakBench",
+      "file": "jailbreakbench.json",
+      "samples": 200,
+      "evaluated": 200,
+      "accuracy": 65.5,
+      "precision": 59.28,
+      "recall": 99.0,
+      "f1": 74.16,
+      "fpr": 68.0,
+      "avg_latency_ms": 1639.8,
+      "layer_distribution": {
+        "L0": 164,
+        "L1": 34,
+        "L2": 0,
+        "L3": 2
+      },
+      "confusion": {
+        "tp": 99,
+        "fp": 68,
+        "tn": 32,
+        "fn": 1
+      },
+      "errors": 0
+    },
+    {
+      "name": "StrongREJECT",
+      "file": "strongreject.json",
+      "samples": 313,
+      "evaluated": 313,
+      "accuracy": 95.53,
+      "precision": 100.0,
+      "recall": 95.53,
+      "f1": 97.71,
+      "fpr": 0,
+      "avg_latency_ms": 930.6,
+      "layer_distribution": {
+        "L0": 284,
+        "L1": 27,
+        "L2": 0,
+        "L3": 2
+      },
+      "confusion": {
+        "tp": 299,
+        "fp": 0,
+        "tn": 0,
+        "fn": 14
+      },
+      "errors": 0
+    },
+    {
+      "name": "HarmBench",
+      "file": "harmbench_test.json",
+      "samples": 500,
+      "evaluated": 500,
+      "accuracy": 99.6,
+      "precision": 100.0,
+      "recall": 99.6,
+      "f1": 99.8,
+      "fpr": 0,
+      "avg_latency_ms": 4.6,
+      "layer_distribution": {
+        "L0": 500,
+        "L1": 0,
+        "L2": 0,
+        "L3": 0
+      },
+      "confusion": {
+        "tp": 498,
+        "fp": 0,
+        "tn": 0,
+        "fn": 2
+      },
+      "errors": 0
+    },
+    {
+      "name": "SGBench",
+      "file": "sgbench.json",
+      "samples": 1442,
+      "evaluated": 1442,
+      "accuracy": 89.6,
+      "precision": 100.0,
+      "recall": 89.6,
+      "f1": 94.51,
+      "fpr": 0,
+      "avg_latency_ms": 1309.8,
+      "layer_distribution": {
+        "L0": 1216,
+        "L1": 214,
+        "L2": 0,
+        "L3": 12
+      },
+      "confusion": {
+        "tp": 1292,
+        "fp": 0,
+        "tn": 0,
+        "fn": 150
+      },
+      "errors": 0
+    },
+    {
+      "name": "OpenAI Moderation",
+      "file": "openai_moderation.json",
+      "samples": 1680,
+      "evaluated": 1680,
+      "accuracy": 74.11,
+      "precision": 55.05,
+      "recall": 90.8,
+      "f1": 68.55,
+      "fpr": 33.42,
+      "avg_latency_ms": 6838.4,
+      "layer_distribution": {
+        "L0": 995,
+        "L1": 591,
+        "L2": 0,
+        "L3": 94
+      },
+      "confusion": {
+        "tp": 474,
+        "fp": 387,
+        "tn": 771,
+        "fn": 48
+      },
+      "errors": 0
+    },
+    {
+      "name": "BeaverTails",
+      "file": "beavertails_30k.json",
+      "samples": 3021,
+      "evaluated": 3021,
+      "accuracy": 70.08,
+      "precision": 69.49,
+      "recall": 85.29,
+      "f1": 76.58,
+      "fpr": 50.39,
+      "avg_latency_ms": 2114.0,
+      "layer_distribution": {
+        "L0": 2317,
+        "L1": 663,
+        "L2": 1,
+        "L3": 40
+      },
+      "confusion": {
+        "tp": 1478,
+        "fp": 649,
+        "tn": 639,
+        "fn": 255
+      },
+      "errors": 0
+    },
+    {
+      "name": "ToxicChat",
+      "file": "toxicchat_test.json",
+      "samples": 5083,
+      "evaluated": 5083,
+      "accuracy": 91.52,
+      "precision": 44.76,
+      "recall": 81.49,
+      "f1": 57.79,
+      "fpr": 7.71,
+      "avg_latency_ms": 2793.7,
+      "layer_distribution": {
+        "L0": 3992,
+        "L1": 944,
+        "L2": 48,
+        "L3": 99
+      },
+      "confusion": {
+        "tp": 295,
+        "fp": 364,
+        "tn": 4357,
+        "fn": 67
+      },
+      "errors": 0
+    },
+    {
+      "name": "SALAD-Bench Attack",
+      "file": "salad_bench_attack.json",
+      "samples": 5000,
+      "evaluated": 5000,
+      "accuracy": 90.84,
+      "precision": 100.0,
+      "recall": 90.84,
+      "f1": 95.2,
+      "fpr": 0,
+      "avg_latency_ms": 9883.4,
+      "layer_distribution": {
+        "L0": 2161,
+        "L1": 2461,
+        "L2": 0,
+        "L3": 378
+      },
+      "confusion": {
+        "tp": 4542,
+        "fp": 0,
+        "tn": 0,
+        "fn": 458
+      },
+      "errors": 0
+    },
+    {
+      "name": "SALAD-Bench Base",
+      "file": "salad_bench_base.json",
+      "samples": 21318,
+      "evaluated": 21318,
+      "accuracy": 78.66,
+      "precision": 100.0,
+      "recall": 78.66,
+      "f1": 88.05,
+      "fpr": 0,
+      "avg_latency_ms": 2053.2,
+      "layer_distribution": {
+        "L0": 16650,
+        "L1": 4317,
+        "L2": 96,
+        "L3": 255
+      },
+      "confusion": {
+        "tp": 16768,
+        "fp": 0,
+        "tn": 0,
+        "fn": 4550
+      },
+      "errors": 0
+    },
+    {
+      "name": "OR-Bench",
+      "file": "or_bench.json",
+      "samples": 82333,
+      "evaluated": 82333,
+      "accuracy": 79.11,
+      "precision": 3.23,
+      "recall": 87.33,
+      "f1": 6.24,
+      "fpr": 20.95,
+      "avg_latency_ms": 2226.6,
+      "layer_distribution": {
+        "L0": 64668,
+        "L1": 16205,
+        "L2": 254,
+        "L3": 1206
+      },
+      "confusion": {
+        "tp": 572,
+        "fp": 17113,
+        "tn": 64565,
+        "fn": 83
+      },
+      "errors": 0
+    },
+    {
+      "name": "Combined",
+      "file": "combined_benchmark.json",
+      "samples": 10384,
+      "evaluated": 10384,
+      "accuracy": 82.96,
+      "precision": 67.04,
+      "recall": 88.53,
+      "f1": 76.3,
+      "fpr": 19.53,
+      "avg_latency_ms": 3217.9,
+      "layer_distribution": {
+        "L0": 7894,
+        "L1": 2207,
+        "L2": 34,
+        "L3": 249
+      },
+      "confusion": {
+        "tp": 2848,
+        "fp": 1400,
+        "tn": 5767,
+        "fn": 369
+      },
+      "errors": 0
+    }
+  ]
+}
